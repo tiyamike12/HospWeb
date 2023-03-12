@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, {useContext, useState} from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../../context/useAuth";
 import LogoWhite from "../../assets/images/logos/laravel.png";
 import "./Login.css";
 import axios from "axios";
+import {AuthContext} from "../../context/AuthContext";
 
 const Login = () => {
     const [disable, setDisable] = useState(false);
@@ -15,6 +16,7 @@ const Login = () => {
     const { login } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
+    const { setToken } = useContext(AuthContext);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -33,10 +35,13 @@ const Login = () => {
                 const token  = response.data.token;
 
                 console.log("TOKEN IS AVAILABLE")
+                //localStorage.setItem('token', token);
+                console.log(token)
+                navigate("/starter");
+                setToken(token);
                 localStorage.setItem('token', token);
 
-                navigate("/starter");
-                login();
+                //login();
                 //console.log(response.data)
                 navigate(location.state?.from || "/starter", { replace: true });
 

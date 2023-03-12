@@ -19,6 +19,8 @@ const Tables = lazy(() => import("../views/ui/Tables"));
 const Forms = lazy(() => import("../views/ui/Forms"));
 const Breadcrumbs = lazy(() => import("../views/ui/Breadcrumbs"));
 const Login = lazy(() => import("../layouts/auth/Login"));
+const UserList = lazy(() => import("../components/users/UsersList"));
+
 
 /*****Routes******/
 
@@ -38,6 +40,8 @@ const ThemeRoutes = [
             {path: "/table", exact: true, element: <Tables/>},
             {path: "/forms", exact: true, element: <Forms/>},
             {path: "/breadcrumbs", exact: true, element: <Breadcrumbs/>},
+            {path: "/users", exact: true, element: <UserList/>},
+
         ],
     },
     {path: "/login", exact: true, element: <Login/>,},
