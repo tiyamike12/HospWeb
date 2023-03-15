@@ -6,6 +6,7 @@ import user4 from "../../assets/images/users/user4.jpg";
 import user5 from "../../assets/images/users/user5.jpg";
 import {useEffect, useState} from "react";
 import axios from "axios";
+import {Link} from "react-router-dom";
 
 const tableData = [
     {
@@ -84,6 +85,7 @@ const UsersList = () => {
         <div>
             {isLoaded ? (
             <Card>
+                <Link to={'/new-user'}>New User</Link>
                 <CardBody>
                     <CardTitle tag="h5">Users Listing</CardTitle>
                     <CardSubtitle className="mb-2 text-muted" tag="h6">
