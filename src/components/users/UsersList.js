@@ -1,4 +1,4 @@
-import {Card, CardBody, CardSubtitle, CardTitle, Table} from "reactstrap";
+import {Button, Card, CardBody, CardSubtitle, CardTitle, Table} from "reactstrap";
 import user1 from "../../assets/images/users/user1.jpg";
 import user2 from "../../assets/images/users/user2.jpg";
 import user3 from "../../assets/images/users/user3.jpg";
@@ -6,7 +6,10 @@ import user4 from "../../assets/images/users/user4.jpg";
 import user5 from "../../assets/images/users/user5.jpg";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
+import {Modal} from "react-bootstrap";
+import {toast} from "react-toastify";
+const BASE_URL = process.env.REACT_APP_API_URL;
 
 const tableData = [
     {
@@ -57,7 +60,11 @@ const tableData = [
 ];
 const UsersList = () => {
     const [listData, setListData] = useState([]);
+    const [editData, setEditData] = useState([]);
     const [isLoaded, setIsLoaded] = useState(false);
+    const navigate = useNavigate();
+    const [showModal, setShowModal] = useState(false);
+    const [selectedItemId, setSelectedItemId] = useState(null);
 
     // let token = 'BlhVRmwndTLCh9H1se5CAkpRverE6YWbvhUwzGrp';
     const config = {
@@ -70,8 +77,9 @@ const UsersList = () => {
 
     const api = axios.create(config);
 
+
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/api/users')
+        axios.get(  `${BASE_URL}/users`)
             .then(response => {
                 setListData(response.data);
                 setIsLoaded(true);
@@ -79,15 +87,30 @@ const UsersList = () => {
             .catch(error => console.log(error));
     }, []);
 
+    const handleDelete = () => {
+        axios.delete(`${BASE_URL}/users/${selectedItemId}`)
+            .then(response => {
+                setListData(listData.filter(item => item.id !== selectedItemId));
+                setSelectedItemId(null);
+                setShowModal(false);
+                toast.warn("User removed successfully")
+            })
+            .catch(error => console.log(error));
+    };
+
     console.log(listData)
 
     return (
         <div>
             {isLoaded ? (
             <Card>
-                <Link to={'/new-user'}>New User</Link>
+
+
                 <CardBody>
                     <CardTitle tag="h5">Users Listing</CardTitle>
+                    <div className="d-flex justify-content-end">
+                        <Link to={'/new-user'} className="btn btn-primary">Add New User</Link>
+                    </div>
                     <CardSubtitle className="mb-2 text-muted" tag="h6">
                         Overview of the users in the system
                     </CardSubtitle>
@@ -99,6 +122,9 @@ const UsersList = () => {
                             <th>Email</th>
 
                             <th>Role</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+
                         </tr>
                         </thead>
                         <tbody>
@@ -115,6 +141,12 @@ const UsersList = () => {
                                 <td>{tdata.email}</td>
 
                                 <td>{tdata.role.name}</td>
+                                <td><Link to={`/edit-user/${tdata.id}`} className="btn btn-outline-primary">Edit</Link></td>
+                                <td><button className="btn btn-danger" onClick={() => {
+                                    setSelectedItemId(tdata.id);
+                                    setShowModal(true);}}>
+                                    Delete
+                                </button></td>
 
                             </tr>
                         ))}
@@ -122,6 +154,22 @@ const UsersList = () => {
                     </Table>
                 </CardBody>
             </Card> ) : (<p>Loading...</p>)}
+
+            <Modal show={showModal}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Remove User Account</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Are you sure you want to remove this account?</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" className="btn btn-primary" onClick={() => setShowModal(false)}>
+                        Close
+                    </Button>
+                    <Button variant="primary" className="btn btn-danger" role="button" onClick={handleDelete}>
+                        Confirm
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
         </div>
     )
 }

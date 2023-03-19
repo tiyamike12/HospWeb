@@ -6,21 +6,22 @@ export const AuthContext = createContext();
 const AuthContextProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    const [token, setToken] = useState(() => {
-        // Try to get the token from local storage
-        const storedToken = localStorage.getItem('token');
-
-        // If the token is found in local storage, return it as the initial value
-        if (storedToken) {
-
-            const bytes = CryptoJS.AES.decrypt(storedToken, 'my-secret-key');
-            const decryptedToken = bytes.toString(CryptoJS.enc.Utf8);
-            return decryptedToken;
-        }
-
-        // Otherwise, return null as the initial value
-        return null;
-    });
+    const [token, setToken] = useState(null);
+    // const [token, setToken] = useState(() => {
+    //     // Try to get the token from local storage
+    //     const storedToken = localStorage.getItem('token');
+    //
+    //     // If the token is found in local storage, return it as the initial value
+    //     if (storedToken) {
+    //
+    //         const bytes = CryptoJS.AES.decrypt(storedToken, 'my-secret-key');
+    //         const decryptedToken = bytes.toString(CryptoJS.enc.Utf8);
+    //         return decryptedToken;
+    //     }
+    //
+    //     // Otherwise, return null as the initial value
+    //     return null;
+    // });
 
     useEffect(() => {
         // Whenever the token changes, update it in local storage

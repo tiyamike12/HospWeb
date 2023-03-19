@@ -17,6 +17,7 @@ import {ReactComponent as LogoWhite} from "../assets/images/logos/xtremelogowhit
 import user1 from "../assets/images/users/user1.jpg";
 import {AuthContext} from "../context/AuthContext";
 import axios from "axios";
+const BASE_URL = process.env.REACT_APP_API_URL;
 
 const Header = () => {
     const [isOpen, setIsOpen] = React.useState(false);
@@ -31,9 +32,9 @@ const Header = () => {
 
     const handleLogout = async () => {
         try {
-            await axios.post('http://127.0.0.1:8000/api/logout');
+            await axios.post(`${BASE_URL}/logout`);
             setToken(null);
-            localStorage.removeItem('token');
+            //localStorage.removeItem('token');
             navigate('/login');
         } catch (error) {
             // Handle errors

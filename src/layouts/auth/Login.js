@@ -5,7 +5,8 @@ import LogoWhite from "../../assets/images/logos/laravel.png";
 import "./Login.css";
 import axios from "axios";
 import {AuthContext} from "../../context/AuthContext";
-
+import {toast} from "react-toastify";
+const BASE_URL = process.env.REACT_APP_API_URL;
 const Login = () => {
     const [disable, setDisable] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -24,7 +25,7 @@ const Login = () => {
         setIsLoading(true)
         setDisable(true)
         try {
-            const response = await axios.post('http://127.0.0.1:8000/api/login', {
+            const response = await axios.post(`${BASE_URL}/login`, {
                 email,
                 password,
             });
@@ -37,6 +38,7 @@ const Login = () => {
                 console.log("TOKEN IS AVAILABLE")
                 //localStorage.setItem('token', token);
                 console.log(token)
+                toast.success("Login successful!")
                 navigate("/starter");
                 setToken(token);
                 localStorage.setItem('token', token);

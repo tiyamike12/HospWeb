@@ -1,22 +1,39 @@
 import {useEffect, useState} from 'react';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import axios from 'axios';
 import {Button, Card, CardBody, CardTitle, Col, Form, FormGroup, FormText, Input, Label, Row} from "reactstrap";
 import {toast} from "react-toastify";
 const BASE_URL = process.env.REACT_APP_API_URL;
 
-function CreateUser() {
+function EditUser() {
     const [disable, setDisable] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
     const [roles, setRoles] = useState([]);
     const [selectedItem, setSelectedItem] = useState('');
-    const navigate = useNavigate();
     const [user, setUser] = useState({
         name: '',
         email: '',
         password: '',
         role_id: '',
     });
+    const { id } = useParams();
+
+    useEffect(() => {
+        axios.get(`${BASE_URL}/users/${id}`)
+            .then(response => {
+                const userData = response.data;
+                setUser({
+                    name: userData.name,
+                    email: userData.email,
+                    password: userData.password,
+                    role_id: userData.role.role_id
+                });
+                console.log(response.data)
+                //setIsLoaded(true);
+            })
+            .catch(error => console.log(error));
+    }, [id]);
 
     useEffect(() => {
         axios.get(`${BASE_URL}/roles`)
@@ -24,14 +41,18 @@ function CreateUser() {
             .catch(error => console.log(error));
     }, []);
 
+    const handleInputChange = e => {
+        setUser({ ...user, [e.target.name]: e.target.value });
+    }
+
     const handleSubmit = async (e) => {
         setIsLoading(true)
         setDisable(true)
         e.preventDefault();
         try {
-            await axios.post(`${BASE_URL}/users`, user)
-                .then(res => toast.success("User created successfully"));
-            navigate('/users');
+            await axios.patch(`${BASE_URL}/users/${id}`, user);
+            toast.warn("User updated successfully")
+            navigate('/starter');
         } catch (error) {
             if (error.response.status === 422) {
                 console.log(error.response.data.message);
@@ -46,10 +67,6 @@ function CreateUser() {
         setDisable(false)
     };
 
-    const handleChange = (e) => {
-        setUser({ ...user, [e.target.name]: e.target.value });
-    };
-
     return (
         <Row>
             <Col>
@@ -59,7 +76,7 @@ function CreateUser() {
                 <Card>
                     <CardTitle tag="h6" className="border-bottom p-3 mb-0">
                         <i className="bi bi-bell me-2"> </i>
-                        Create a User
+                        Edit User
                     </CardTitle>
                     <CardBody>
                         <Form onSubmit={handleSubmit}>
@@ -71,7 +88,7 @@ function CreateUser() {
                                     placeholder="Username"
                                     type="text"
                                     value={user.name}
-                                    onChange={handleChange}
+                                    onChange={handleInputChange}
                                 />
                             </FormGroup>
                             <FormGroup>
@@ -82,7 +99,7 @@ function CreateUser() {
                                     placeholder="Email"
                                     type="email"
                                     value={user.email}
-                                    onChange={handleChange}
+                                    onChange={handleInputChange}
                                 />
                             </FormGroup>
                             <FormGroup>
@@ -93,13 +110,13 @@ function CreateUser() {
                                     placeholder="password placeholder"
                                     type="password"
                                     value={user.password}
-                                    onChange={handleChange}
+                                    onChange={handleInputChange}
                                 />
                             </FormGroup>
                             <FormGroup>
                                 <Label for="role_id">Select</Label>
                                 <Input id="role_id" name="role_id" type="select" value={selectedItem}
-                                       onChange={handleChange}>
+                                       onChange={handleInputChange}>
                                     {roles.map(role => (
                                         <option key={role.id} value={role.id}>{role.name}</option>
                                     ))}
@@ -107,7 +124,7 @@ function CreateUser() {
                             </FormGroup>
 
                             <Button type="submit" className="btn btn-success"  disabled={disable}>
-                                Add User&emsp;
+                                Update User&emsp;
                                 {isLoading && <span className="spinner-border spinner-border-sm me-1"></span> }
                             </Button>
                         </Form>
@@ -118,4 +135,4 @@ function CreateUser() {
     );
 }
 
-export default CreateUser;
+export default EditUser;

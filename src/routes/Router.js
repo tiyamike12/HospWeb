@@ -2,6 +2,7 @@ import {lazy} from "react";
 import {Navigate} from "react-router-dom";
 import AuthContextProvider from "../context/AuthContext";
 import PrivateRoute from "../context/PrivateRoute";
+import EditUser from "../components/users/EditUser";
 
 /****Layouts*****/
 const FullLayout = lazy(() => import("../layouts/FullLayout.js"));
@@ -43,8 +44,7 @@ const ThemeRoutes = [
             {path: "/breadcrumbs", exact: true, element: <Breadcrumbs/>},
             {path: "/users", exact: true, element: <UserList/>},
             {path: "/new-user", exact: true, element: <NewUser/>},
-
-
+            {path: "/edit-user/:id", exact: true, element: <EditUser/>}
         ],
     },
     {path: "/login", exact: true, element: <Login/>,},
