@@ -3,6 +3,9 @@ import {useNavigate, useParams} from 'react-router-dom';
 import axios from 'axios';
 import {Button, Card, CardBody, CardTitle, Col, Form, FormGroup, FormText, Input, Label, Row} from "reactstrap";
 import {toast} from "react-toastify";
+import Alert from "react-s-alert";
+import validator from 'validator';
+
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 function EditUser() {
@@ -14,8 +17,10 @@ function EditUser() {
     const [user, setUser] = useState({
         name: '',
         email: '',
+        phone_number: '',
         password: '',
         role_id: '',
+        // errors: {}
     });
     const { id } = useParams();
 
@@ -26,6 +31,7 @@ function EditUser() {
                 setUser({
                     name: userData.name,
                     email: userData.email,
+                    phone_number: userData.phone_number,
                     password: userData.password,
                     role_id: userData.role.role_id
                 });
@@ -46,13 +52,51 @@ function EditUser() {
     }
 
     const handleSubmit = async (e) => {
+
+        e.preventDefault();
+
+        // const errors = {};
+        //
+        // if (validator.isEmpty(user.name)) {
+        //     errors.name = 'User Name is required';
+        // }
+        //
+        // if (validator.isEmpty(user.email)) {
+        //     errors.email = 'Email is required';
+        // }
+        //
+        // if (validator.isEmail(user.email)) {
+        //     errors.email = 'Email must be a valid email';
+        // }
+        //
+        // if (validator.isEmpty(user.password)) {
+        //     errors.password = 'Password is required';
+        // }
+        //
+        // if (validator.isEmpty(user.phone_number)) {
+        //     errors.phone_number = 'Phone Number is required';
+        // }
+        //
+        // if (validator.isNumeric(user.phone_number)) {
+        //     errors.phone_number = 'Phone Number must be numeric';
+        // }
+        //
+        // if (validator.isEmpty(user.role_id)) {
+        //     errors.role_id = 'Role is required';
+        // }
+        //
+        // if (Object.keys(errors).length) {
+        //     setUser({ ...user, errors });
+        //     return;
+        // }
+
         setIsLoading(true)
         setDisable(true)
-        e.preventDefault();
+
         try {
             await axios.patch(`${BASE_URL}/users/${id}`, user);
-            toast.warn("User updated successfully")
-            navigate('/starter');
+            Alert.success('User updated successfully!');
+            navigate('/users');
         } catch (error) {
             if (error.response.status === 422) {
                 console.log(error.response.data.message);
@@ -67,6 +111,16 @@ function EditUser() {
         setDisable(false)
     };
 
+    const getSelectClassName = name => {
+        if (user.errors[name]) {
+            return 'form-control is-invalid';
+        } else if (user[name]) {
+            return 'form-control is-valid';
+        } else {
+            return 'form-control';
+        }
+    };
+
     return (
         <Row>
             <Col>
@@ -79,7 +133,7 @@ function EditUser() {
                         Edit User
                     </CardTitle>
                     <CardBody>
-                        <Form onSubmit={handleSubmit}>
+                        <Form onSubmit={handleSubmit} autoComplete="off">
                             <FormGroup>
                                 <Label for="name">Username</Label>
                                 <Input
@@ -88,8 +142,25 @@ function EditUser() {
                                     placeholder="Username"
                                     type="text"
                                     value={user.name}
+                                    // valid={!!user.name && !user.errors.name}
+                                    // invalid={!!user.errors.name}
                                     onChange={handleInputChange}
                                 />
+                                {/*{user.errors.name && <span className="text-danger" style={{ marginTop: 10}}>{user.errors.name}</span>}*/}
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="phone_number">Phone</Label>
+                                <Input
+                                    id="phone_number"
+                                    name="phone_number"
+                                    placeholder="Phone"
+                                    type="number"
+                                    value={user.phone_number}
+                                    // valid={!!user.phone_number && !user.errors.phone_number}
+                                    // invalid={!!user.errors.phone_number}
+                                    onChange={handleInputChange}
+                                />
+                                {/*{user.errors.phone_number && <span className="text-danger" style={{ marginTop: 10}}>{user.errors.phone_number}</span>}*/}
                             </FormGroup>
                             <FormGroup>
                                 <Label for="email">Email</Label>
@@ -99,8 +170,11 @@ function EditUser() {
                                     placeholder="Email"
                                     type="email"
                                     value={user.email}
+                                    // valid={!!user.email && !user.errors.email}
+                                    // invalid={!!user.errors.email}
                                     onChange={handleInputChange}
                                 />
+                                {/*{user.errors.email && <span className="text-danger" style={{ marginTop: 10}}>{user.errors.email}</span>}*/}
                             </FormGroup>
                             <FormGroup>
                                 <Label for="password">Password</Label>
@@ -110,17 +184,26 @@ function EditUser() {
                                     placeholder="password placeholder"
                                     type="password"
                                     value={user.password}
+                                    // valid={!!user.password && !user.errors.password}
+                                    // invalid={!!user.errors.password}
                                     onChange={handleInputChange}
                                 />
+                                {/*{user.errors.password && <span className="text-danger" style={{ marginTop: 10}}>{user.errors.password}</span>}*/}
+
                             </FormGroup>
                             <FormGroup>
                                 <Label for="role_id">Select</Label>
-                                <Input id="role_id" name="role_id" type="select" value={selectedItem}
+                                <select id="role_id" name="role_id"
+                                        className="form-control"
+                                        //className={getSelectClassName('role_id')}
+                                        value={selectedItem} required={true}
                                        onChange={handleInputChange}>
+                                    <option value="">Please select a value</option>
                                     {roles.map(role => (
                                         <option key={role.id} value={role.id}>{role.name}</option>
                                     ))}
-                                </Input>
+                                </select>
+                                {/*{user.errors.role_id && <span className="text-danger" style={{ marginTop: 10}}>{user.errors.role_id}</span>}*/}
                             </FormGroup>
 
                             <Button type="submit" className="btn btn-success"  disabled={disable}>
@@ -131,6 +214,8 @@ function EditUser() {
                     </CardBody>
                 </Card>
             </Col>
+            <Alert stack={{ limit: 5 }} />
+
         </Row>
     );
 }

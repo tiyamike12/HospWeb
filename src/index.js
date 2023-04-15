@@ -7,6 +7,9 @@ import {BrowserRouter, HashRouter, Routes} from "react-router-dom";
 import Loader from "./layouts/loader/Loader";
 import AuthContextProvider from "./context/AuthContext";
 import 'react-toastify/dist/ReactToastify.css';
+import 'react-notifications-component/dist/theme.css';
+import 'react-s-alert/dist/s-alert-default.css';
+import 'react-s-alert/dist/s-alert-css-effects/slide.css';
 
 ReactDOM.render(<Suspense fallback={<Loader/>}>
         <HashRouter>
