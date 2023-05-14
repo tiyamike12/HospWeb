@@ -9,18 +9,18 @@ const navigation = [
         icon: "bi bi-speedometer2",
     },
     {
-        title: "Alert",
-        href: "/alerts",
+        title: "Patients",
+        href: "/patients",
         icon: "bi bi-bell",
     },
     {
-        title: "Badges",
-        href: "/badges",
+        title: "Wards",
+        href: "/wards",
         icon: "bi bi-patch-check",
     },
     {
-        title: "Buttons",
-        href: "/buttons",
+        title: "Inventory",
+        href: "/inventories",
         icon: "bi bi-hdd-stack",
     },
     {

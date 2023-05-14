@@ -1,82 +1,19 @@
 import {Button, Card, CardBody, CardSubtitle, CardTitle, Table} from "reactstrap";
-import user1 from "../../assets/images/users/user1.jpg";
-import user2 from "../../assets/images/users/user2.jpg";
-import user3 from "../../assets/images/users/user3.jpg";
-import user4 from "../../assets/images/users/user4.jpg";
-import user5 from "../../assets/images/users/user5.jpg";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {Link, useNavigate} from "react-router-dom";
 import {Modal} from "react-bootstrap";
 import {toast} from "react-toastify";
+import Alert from 'react-s-alert';
+
 const BASE_URL = process.env.REACT_APP_API_URL;
 
-const tableData = [
-    {
-        avatar: user1,
-        name: "Hanna Gover",
-        email: "hgover@gmail.com",
-        project: "Flexy React",
-        status: "pending",
-        weeks: "35",
-        budget: "95K",
-    },
-    {
-        avatar: user2,
-        name: "Hanna Gover",
-        email: "hgover@gmail.com",
-        project: "Lading pro React",
-        status: "done",
-        weeks: "35",
-        budget: "95K",
-    },
-    {
-        avatar: user3,
-        name: "Hanna Gover",
-        email: "hgover@gmail.com",
-        project: "Elite React",
-        status: "holt",
-        weeks: "35",
-        budget: "95K",
-    },
-    {
-        avatar: user4,
-        name: "Hanna Gover",
-        email: "hgover@gmail.com",
-        project: "Flexy React",
-        status: "pending",
-        weeks: "35",
-        budget: "95K",
-    },
-    {
-        avatar: user5,
-        name: "Hanna Gover",
-        email: "hgover@gmail.com",
-        project: "Ample React",
-        status: "done",
-        weeks: "35",
-        budget: "95K",
-    },
-];
 const UsersList = () => {
     const [listData, setListData] = useState([]);
-    const [editData, setEditData] = useState([]);
     const [isLoaded, setIsLoaded] = useState(false);
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
     const [selectedItemId, setSelectedItemId] = useState(null);
-
-    // let token = 'BlhVRmwndTLCh9H1se5CAkpRverE6YWbvhUwzGrp';
-    const config = {
-        baseURL: 'http://127.0.0.1:8000/api',
-        // headers: {
-        //     'Authorization': `Bearer ${token}`
-        // },
-        timeout: 5000
-    };
-
-    const api = axios.create(config);
-
 
     useEffect(() => {
         axios.get(  `${BASE_URL}/users`)
@@ -93,7 +30,10 @@ const UsersList = () => {
                 setListData(listData.filter(item => item.id !== selectedItemId));
                 setSelectedItemId(null);
                 setShowModal(false);
-                toast.warn("User removed successfully")
+                toast.success('User removed successfully')
+                //NotificationManager.success('User removed successfully');
+                Alert.success('User removed successfully!');
+
             })
             .catch(error => console.log(error));
     };
@@ -161,7 +101,7 @@ const UsersList = () => {
                 </Modal.Header>
                 <Modal.Body>Are you sure you want to remove this account?</Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" className="btn btn-primary" onClick={() => setShowModal(false)}>
+                    <Button  className="btn btn-outline-light" onClick={() => setShowModal(false)}>
                         Close
                     </Button>
                     <Button variant="primary" className="btn btn-danger" role="button" onClick={handleDelete}>
@@ -169,6 +109,7 @@ const UsersList = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
+            <Alert stack={{ limit: 5 }} />
 
         </div>
     )

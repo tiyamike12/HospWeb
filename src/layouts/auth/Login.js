@@ -6,6 +6,8 @@ import "./Login.css";
 import axios from "axios";
 import {AuthContext} from "../../context/AuthContext";
 import {toast} from "react-toastify";
+import validator from 'validator';
+
 const BASE_URL = process.env.REACT_APP_API_URL;
 const Login = () => {
     const [disable, setDisable] = useState(false);
