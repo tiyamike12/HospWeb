@@ -6,26 +6,24 @@ import {toast} from "react-toastify";
 import Alert from "react-s-alert";
 const BASE_URL = process.env.REACT_APP_API_URL;
 
-function CreateInventory() {
+function NewLabTest() {
     const [disable, setDisable] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
-    const [inventory, setInventory] = useState({
-        item_name: '',
-        item_description: '',
-        quantity: '',
-        supplier: '',
-        cost: '',
+    const [labTest, setLabTest] = useState({
+        test_name: '',
+        description: '',
+        lab_charges: '',
     });
     const handleSubmit = async (e) => {
         setIsLoading(true)
         setDisable(true)
         e.preventDefault();
         try {
-            await axios.post(`${BASE_URL}/inventories`, inventory)
-                .then(res => toast.success("Inventory Record created successfully"));
-            navigate('/inventories');
-            Alert.success('Inventory Record added successfully!');
+            await axios.post(`${BASE_URL}/lab-tests`, labTest)
+                .then(res => toast.success("Lab Test Record created successfully"));
+            navigate('/lab-tests');
+            Alert.success('Lab Test Record added successfully!');
 
         } catch (error) {
             if (error.response.status === 422) {
@@ -42,8 +40,13 @@ function CreateInventory() {
     };
 
     const handleChange = (e) => {
-        setInventory({ ...inventory, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setLabTest(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
     };
+
 
     return (
         <Row>
@@ -54,72 +57,48 @@ function CreateInventory() {
                 <Card>
                     <CardTitle tag="h6" className="border-bottom p-3 mb-0">
                         <i className="bi bi-bell me-2"> </i>
-                        Create an Inventory Record
+                        Create a Lab Test Record
                     </CardTitle>
                     <CardBody>
                         <Form onSubmit={handleSubmit}>
                             <FormGroup>
-                                <Label for="item_name">Item Name</Label>
+                                <Label for="test_name">Test Name</Label>
                                 <Input
-                                    id="item_name"
-                                    name="item_name"
-                                    placeholder="Item Name"
+                                    id="test_name"
+                                    name="test_name"
+                                    placeholder="Test Name"
                                     type="text"
-                                    value={inventory.item_name}
+                                    value={labTest.test_name}
                                     onChange={handleChange}
                                 />
                             </FormGroup>
                             <FormGroup>
-                                <Label for="item_description">Item Description</Label>
+                                <Label for="description"> Description</Label>
                                 <Input
-                                    id="item_description"
-                                    name="item_description"
-                                    placeholder="Item Description"
+                                    id="description"
+                                    name="description"
+                                    placeholder=" Description"
                                     type="text"
-                                    value={inventory.item_description}
+                                    value={labTest.description}
                                     onChange={handleChange}
                                 />
                             </FormGroup>
 
                             <FormGroup>
-                                <Label for="quantity">Quantity</Label>
+                                <Label for="lab_charges">Lab Charges</Label>
                                 <Input
-                                    id="quantity"
-                                    name="quantity"
-                                    placeholder="Quantity"
+                                    id="lab_charges"
+                                    name="lab_charges"
+                                    placeholder="Lab Charges"
                                     type="number"
-                                    value={inventory.quantity}
-                                    onChange={handleChange}
-                                />
-                            </FormGroup>
-
-                            <FormGroup>
-                                <Label for="supplier">Supplier</Label>
-                                <Input
-                                    id="supplier"
-                                    name="supplier"
-                                    placeholder="Supplier"
-                                    type="text"
-                                    value={inventory.supplier}
-                                    onChange={handleChange}
-                                />
-                            </FormGroup>
-
-                            <FormGroup>
-                                <Label for="cost">Cost</Label>
-                                <Input
-                                    id="cost"
-                                    name="cost"
-                                    placeholder="Cost"
-                                    type="number"
-                                    value={inventory.cost}
+                                    value={labTest.lab_charges}
                                     onChange={handleChange}
                                 />
                             </FormGroup>
 
 
                             <Button type="submit" className="btn btn-success"  disabled={disable}>
-                                Add Inventory&emsp;
+                                Add Lab Test&emsp;
                                 {isLoading && <span className="spinner-border spinner-border-sm me-1"></span> }
                             </Button>
                         </Form>
@@ -133,4 +112,4 @@ function CreateInventory() {
     );
 }
 
-export default CreateInventory;
+export default NewLabTest;

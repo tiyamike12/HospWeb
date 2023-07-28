@@ -19,7 +19,6 @@ function CreatePatient() {
         phone: '',
         email: '',
         physical_address: '',
-        insurance_information: '',
     });
     const handleSubmit = async (e) => {
         setIsLoading(true)
@@ -134,17 +133,6 @@ function CreatePatient() {
                                     placeholder="Address"
                                     type="text"
                                     value={patient.physical_address}
-                                    onChange={handleChange}
-                                />
-                            </FormGroup>
-                            <FormGroup>
-                                <Label for="insurance_information">Insurance Information</Label>
-                                <Input
-                                    id="insurance_information"
-                                    name="insurance_information"
-                                    placeholder="Insurance Information"
-                                    type="text"
-                                    value={patient.insurance_information}
                                     onChange={handleChange}
                                 />
                             </FormGroup>

@@ -14,7 +14,7 @@ const Login = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessages, setErrorMessages] = useState("");
 
-    const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const { login } = useAuth();
     const navigate = useNavigate();
@@ -28,7 +28,7 @@ const Login = () => {
         setDisable(true)
         try {
             const response = await axios.post(`${BASE_URL}/login`, {
-                email,
+                username,
                 password,
             });
 
@@ -53,7 +53,9 @@ const Login = () => {
             //console.log("API TOKEN: " + token)
         } catch (error) {
             if (error.response.status === 401) {
-                setErrorMessages(error.response.data.errors);
+                //setErrorMessages(error.response.data.errors);
+
+                setErrorMessages("Invalid Password");
                 console.log("Unauthorized")
             } else {
                 console.error(error)
@@ -81,14 +83,14 @@ const Login = () => {
                         <p className="my-4 font-weight-normal"></p>
                     </div>
                     <div className="form-group mt-3">
-                        <label>Email address</label>
+                        <label>Username</label>
                         <input
-                            type="email"
-                            name="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            type="text"
+                            name="username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
                             className="form-control mt-1"
-                            placeholder="Enter email"
+                            placeholder="Enter username"
                             required
                         />
                     </div>

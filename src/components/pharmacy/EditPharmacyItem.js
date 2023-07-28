@@ -6,29 +6,27 @@ import {toast} from "react-toastify";
 import Alert from "react-s-alert";
 const BASE_URL = process.env.REACT_APP_API_URL;
 
-function EditInventory() {
+function EditPharmacyItem() {
     const [disable, setDisable] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
-    const [inventory, setInventory] = useState({
+    const [pharmacyItem, setPharmacyItem] = useState({
         item_name: '',
-        item_description: '',
-        quantity: '',
-        supplier: '',
-        cost: '',
+        description: '',
+        quantity_available: '',
+        unit_price: ''
     });
     const { id } = useParams();
 
     useEffect(() => {
-        axios.get(`${BASE_URL}/inventories/${id}`)
+        axios.get(`${BASE_URL}/pharmacy-items/${id}`)
             .then(response => {
-                const inventoryData = response.data;
-                setInventory({
-                    item_name: inventoryData.item_name,
-                    item_description: inventoryData.item_description,
-                    quantity: inventoryData.quantity,
-                    supplier: inventoryData.supplier,
-                    cost: inventoryData.cost,
+                const pharmacyData = response.data;
+                setPharmacyItem({
+                    item_name: pharmacyData.item_name,
+                    description: pharmacyData.description,
+                    quantity_available: pharmacyData.quantity_available,
+                    unit_price: pharmacyData.unit_price,
                 });
                 console.log(response.data)
                 //setIsLoaded(true);
@@ -36,18 +34,21 @@ function EditInventory() {
             .catch(error => console.log(error));
     }, [id]);
 
-    const handleInputChange = e => {
-        setInventory({ ...inventory, [e.target.name]: e.target.value });
-    }
-
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setPharmacyItem(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
     const handleSubmit = async (e) => {
         setIsLoading(true)
         setDisable(true)
         e.preventDefault();
         try {
-            await axios.patch(`${BASE_URL}/inventories/${id}`, inventory);
-            Alert.success('Inventory updated successfully!');
-            navigate('/inventories');
+            await axios.patch(`${BASE_URL}/pharmacy-items/${id}`, pharmacyItem);
+            Alert.success('Pharmacy Item Record updated successfully!');
+            navigate('/pharmacy-items');
         } catch (error) {
             if (error.response.status === 422) {
                 console.log(error.response.data.message);
@@ -71,10 +72,11 @@ function EditInventory() {
                 <Card>
                     <CardTitle tag="h6" className="border-bottom p-3 mb-0">
                         <i className="bi bi-bell me-2"> </i>
-                        Edit Inventory
+                        Update Pharmacy Item
                     </CardTitle>
                     <CardBody>
                         <Form onSubmit={handleSubmit}>
+
                             <FormGroup>
                                 <Label for="item_name">Item Name</Label>
                                 <Input
@@ -82,61 +84,47 @@ function EditInventory() {
                                     name="item_name"
                                     placeholder="Item Name"
                                     type="text"
-                                    value={inventory.item_name}
-                                    onChange={handleInputChange}
+                                    value={pharmacyItem.item_name}
+                                    onChange={handleChange}
                                 />
                             </FormGroup>
                             <FormGroup>
-                                <Label for="item_description">Item Description</Label>
+                                <Label for="description">Description</Label>
                                 <Input
-                                    id="item_description"
-                                    name="item_description"
-                                    placeholder="Item Description"
+                                    id="description"
+                                    name="description"
+                                    placeholder="Description"
                                     type="text"
-                                    value={inventory.item_description}
-                                    onChange={handleInputChange}
+                                    value={pharmacyItem.description}
+                                    onChange={handleChange}
                                 />
                             </FormGroup>
 
                             <FormGroup>
-                                <Label for="quantity">Quantity</Label>
+                                <Label for="quantity_available">Quantity Available</Label>
                                 <Input
-                                    id="quantity"
-                                    name="quantity"
-                                    placeholder="Quantity"
-                                    type="number"
-                                    value={inventory.quantity}
-                                    onChange={handleInputChange}
-                                />
-                            </FormGroup>
-
-                            <FormGroup>
-                                <Label for="supplier">Supplier</Label>
-                                <Input
-                                    id="supplier"
-                                    name="supplier"
-                                    placeholder="Supplier"
+                                    id="quantity_available"
+                                    name="quantity_available"
                                     type="text"
-                                    value={inventory.supplier}
-                                    onChange={handleInputChange}
+                                    value={pharmacyItem.quantity_available}
+                                    onChange={handleChange}
                                 />
                             </FormGroup>
-
                             <FormGroup>
-                                <Label for="cost">Cost</Label>
+                                <Label for="unit_price">Unit Price</Label>
                                 <Input
-                                    id="cost"
-                                    name="cost"
-                                    placeholder="Cost"
+                                    id="unit_price"
+                                    name="unit_price"
+                                    placeholder="Unit Price"
                                     type="number"
-                                    value={inventory.cost}
-                                    onChange={handleInputChange}
+                                    value={pharmacyItem.unit_price}
+                                    onChange={handleChange}
                                 />
                             </FormGroup>
 
 
                             <Button type="submit" className="btn btn-success"  disabled={disable}>
-                                Update Inventory&emsp;
+                                Update Pharmacy Item&emsp;
                                 {isLoading && <span className="spinner-border spinner-border-sm me-1"></span> }
                             </Button>
                         </Form>
@@ -146,7 +134,8 @@ function EditInventory() {
             <Alert stack={{ limit: 5 }} />
 
         </Row>
+
     );
 }
 
-export default EditInventory;
+export default EditPharmacyItem;

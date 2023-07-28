@@ -28,9 +28,34 @@ const EditPatient = lazy(() => import("../components/patient/EditPatient"));
 const WardList = lazy(() => import("../components/ward/WardList"));
 const NewWard = lazy(() => import("../components/ward/NewWard"));
 const EditWard = lazy(() => import("../components/ward/EditWard"));
-const InventoryList = lazy(() => import("../components/inventory/InventoryList"));
-const NewInventory = lazy(() => import("../components/inventory/NewInventory"));
-const EditInventory = lazy(() => import("../components/inventory/EditInventory"));
+const InventoryList = lazy(() => import("../components/lab-test/LabTestsList"));
+const NewInventory = lazy(() => import("../components/lab-test/NewLabTest"));
+const EditInventory = lazy(() => import("../components/lab-test/EditLabTest"));
+const NewAppointment = lazy(() => import("../components/appointments/NewAppointment"));
+const AppointmentList = lazy(() => import("../components/appointments/AppointmentList"));
+const EditAppointment = lazy(() => import("../components/appointments/EditAppointment"));
+const NewMedicalRecord = lazy(() => import("../components/medical-records/NewMedicalRecord"));
+const MedicalRecordList = lazy(() => import("../components/medical-records/MedicalRecordList"));
+const EditMedicalRecord = lazy(() => import("../components/medical-records/EditMedicalRecord"));
+const NewBilling = lazy(() => import("../components/billings/NewBilling"));
+const BillingList = lazy(() => import("../components/billings/BillingList"));
+const EditBilling = lazy(() => import("../components/billings/EditBilling"));
+const NewPharmacyItem = lazy(() => import("../components/pharmacy/NewPharmacyItem"));
+const PharmacyItemList = lazy(() => import("../components/pharmacy/PharmacyItemList"));
+const EditPharmacyItem = lazy(() => import("../components/pharmacy/EditPharmacyItem"));
+const NewLabTest = lazy(() => import("../components/lab-test/NewLabTest"));
+const LabTestsList = lazy(() => import("../components/lab-test/LabTestsList"));
+const EditLabTest = lazy(() => import("../components/lab-test/EditLabTest"));
+const NewOperationTheatre = lazy(() => import("../components/operation-theatre/NewOperationTheatre"));
+const OperationTheatresList = lazy(() => import("../components/operation-theatre/OperationTheatresList"));
+const EditOperationTheatre = lazy(() => import("../components/operation-theatre/EditOperationTheatre"));
+const NewDepartment = lazy(() => import("../components/department/NewDepartment"));
+const DepartmentList = lazy(() => import("../components/department/DepartmentList"));
+const EditDepartment = lazy(() => import("../components/department/EditDepartment"));
+const NewInsuranceProvider = lazy(() => import("../components/insurance-providers/NewInsuranceProvider"));
+const InsuranceProvidersList = lazy(() => import("../components/insurance-providers/InsuranceProvidersList"));
+const EditInsuranceProvider = lazy(() => import("../components/insurance-providers/EditInsuranceProvider"));
+
 /*****Routes******/
 
 const ThemeRoutes = [
@@ -59,8 +84,34 @@ const ThemeRoutes = [
             {path: "/new-ward", exact: true, element: <NewWard/>},
             {path: "/edit-ward/:id", exact: true, element: <EditWard/>},
             {path: "/inventories", exact: true, element: <InventoryList/>},
-            {path: "/new-inventory", exact: true, element: <NewInventory/>},
-            {path: "/edit-inventory/:id", exact: true, element: <EditInventory/>}
+            {path: "/new-lab-test", exact: true, element: <NewInventory/>},
+            {path: "/edit-lab-test/:id", exact: true, element: <EditInventory/>},
+            {path: "/new-appointment", exact: true, element: <NewAppointment/>},
+            {path: "/appointments", exact: true, element: <AppointmentList/>},
+            {path: "/edit-appointment/:id", exact: true, element: <EditAppointment/>},
+            {path: "/new-medical-record", exact: true, element: <NewMedicalRecord/>},
+            {path: "/medical-records", exact: true, element: <MedicalRecordList/>},
+            {path: "/edit-medical-record/:id", exact: true, element: <EditMedicalRecord/>},
+            {path: "/new-billing", exact: true, element: <NewBilling/>},
+            {path: "/billings", exact: true, element: <BillingList/>},
+            {path: "/edit-billing/:id", exact: true, element: <EditBilling/>},
+
+            {path: "/new-pharmacy-item", exact: true, element: <NewPharmacyItem/>},
+            {path: "/pharmacy-items", exact: true, element: <PharmacyItemList/>},
+            {path: "/edit-pharmacy-item/:id", exact: true, element: <EditPharmacyItem/>},
+            {path: "/new-lab-test", exact: true, element: <NewLabTest/>},
+            {path: "/lab-tests", exact: true, element: <LabTestsList/>},
+            {path: "/edit-lab-test/:id", exact: true, element: <EditLabTest/>},
+
+            {path: "/new-operation-theatre", exact: true, element: <NewOperationTheatre/>},
+            {path: "/operation-theatres", exact: true, element: <OperationTheatresList/>},
+            {path: "/edit-operation-theatres/:id", exact: true, element: <EditOperationTheatre/>},
+            {path: "/new-department", exact: true, element: <NewDepartment/>},
+            {path: "/departments", exact: true, element: <DepartmentList/>},
+            {path: "/edit-department/:id", exact: true, element: <EditDepartment/>},
+            {path: "/new-insurance-provider", exact: true, element: <NewInsuranceProvider/>},
+            {path: "/insurance-providers", exact: true, element: <InsuranceProvidersList/>},
+            {path: "/edit-insurance-providers/:id", exact: true, element: <EditInsuranceProvider/>},
         ],
     },
     {path: "/login", exact: true, element: <Login/>,},

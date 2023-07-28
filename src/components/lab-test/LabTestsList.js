@@ -8,37 +8,37 @@ import Alert from 'react-s-alert';
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
-const InventoryList = () => {
-    const [inventoryList, setInventoryList] = useState([]);
+const LabTestsList = () => {
+    const [listData, setListData] = useState([]);
     const [isLoaded, setIsLoaded] = useState(false);
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
     const [selectedItemId, setSelectedItemId] = useState(null);
 
     useEffect(() => {
-        axios.get(  `${BASE_URL}/inventories`)
+        axios.get(  `${BASE_URL}/lab-tests`)
             .then(response => {
-                setInventoryList(response.data);
+                setListData(response.data);
                 setIsLoaded(true);
             })
             .catch(error => console.log(error));
     }, []);
 
     const handleDelete = () => {
-        axios.delete(`${BASE_URL}/inventories/${selectedItemId}`)
+        axios.delete(`${BASE_URL}/lab-tests/${selectedItemId}`)
             .then(response => {
-                setInventoryList(inventoryList.filter(item => item.id !== selectedItemId));
+                setListData(listData.filter(item => item.id !== selectedItemId));
                 setSelectedItemId(null);
                 setShowModal(false);
-                toast.success('User removed successfully')
+                toast.success('Lab Test removed successfully')
                 //NotificationManager.success('User removed successfully');
-                Alert.success('Inventory removed successfully!');
+                Alert.success('Lab Test removed successfully!');
 
             })
             .catch(error => console.log(error));
     };
 
-    console.log(inventoryList)
+    console.log(listData)
 
     return (
         <div>
@@ -47,41 +47,36 @@ const InventoryList = () => {
 
 
                     <CardBody>
-                        <CardTitle tag="h5">Inventory Listing</CardTitle>
+                        <CardTitle tag="h5">Lab Tests</CardTitle>
                         <div className="d-flex justify-content-end">
-                            <Link to={'/new-inventory'} className="btn btn-primary">Add New Inventory</Link>
+                            <Link to={'/new-lab-test'} className="btn btn-primary">Add New Lab Test</Link>
                         </div>
                         <CardSubtitle className="mb-2 text-muted" tag="h6">
-                            Overview of the inventories in the system
+                            Lab Test
                         </CardSubtitle>
 
                         <Table className="no-wrap mt-3 align-middle" responsive borderless>
                             <thead>
                             <tr>
                                 <th>Item Name</th>
-                                <th>Item Description</th>
-                                <th>Quantity</th>
-                                <th>Supplier</th>
+                                <th>Description</th>
+                                <th>Lab Charges</th>
 
-                                <th>Cost</th>
                                 <th>Edit</th>
                                 <th>Delete</th>
 
                             </tr>
                             </thead>
                             <tbody>
-                            {inventoryList.map((inventory) => (
-                                <tr key={inventory.id} className="border-top">
-                                    <td>
-                                        {inventory.item_name}
-                                    </td>
-                                    <td>{inventory.item_description}</td>
-                                    <td>{inventory.quantity}</td>
-                                    <td>{inventory.supplier}</td>
-                                    <td>{inventory.cost}</td>
-                                    <td><Link to={`/edit-inventory/${inventory.id}`} className="btn btn-outline-primary">Edit</Link></td>
+                            {listData.map((data) => (
+                                <tr key={data.id} className="border-top">
+
+                                    <td>{data.test_name}</td>
+                                    <td>{data.description}</td>
+                                    <td>{data.lab_charges}</td>
+                                    <td><Link to={`/edit-lab-test/${data.id}`} className="btn btn-outline-primary">Edit</Link></td>
                                     <td><button className="btn btn-danger" onClick={() => {
-                                        setSelectedItemId(inventory.id);
+                                        setSelectedItemId(data.id);
                                         setShowModal(true);}}>
                                         Delete
                                     </button></td>
@@ -95,9 +90,9 @@ const InventoryList = () => {
 
             <Modal show={showModal}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Remove Inventory</Modal.Title>
+                    <Modal.Title>Remove Lab Test</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>Are you sure you want to remove this inventory?</Modal.Body>
+                <Modal.Body>Are you sure you want to remove this item?</Modal.Body>
                 <Modal.Footer>
                     <Button  className="btn btn-outline-light" onClick={() => setShowModal(false)}>
                         Close
@@ -113,4 +108,4 @@ const InventoryList = () => {
     )
 }
 
-export default InventoryList;
+export default LabTestsList;
