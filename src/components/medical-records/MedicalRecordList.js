@@ -72,7 +72,7 @@ const MedicalRecordList = () => {
                             <tbody>
                             {listData.map((tdata) => (
                                 <tr key={tdata.id} className="border-top">
-                                    <td>{tdata.doctor.person.firstname} {tdata.doctor.person.lastname}</td>
+                                    <td>{tdata.user.username}</td>
                                     <td>{tdata.patient.firstname} {tdata.patient.surname}</td>
                                     <td>{tdata.medical_notes}</td>
                                     <td>{tdata.diagnoses}</td>

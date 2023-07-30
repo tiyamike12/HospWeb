@@ -5,7 +5,6 @@ import {Link, useNavigate} from "react-router-dom";
 import {Modal} from "react-bootstrap";
 import {toast} from "react-toastify";
 import Alert from 'react-s-alert';
-
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 const UsersList = () => {
@@ -73,12 +72,12 @@ const UsersList = () => {
                                 <td>
                                     <div className="d-flex align-items-center p-2">
                                         <div className="ms-3">
-                                            <h6 className="mb-0">{tdata.name}</h6>
-                                            <span className="text-muted">{tdata.email}</span>
+                                            <h6 className="mb-0">{tdata.person.firstname} {tdata.person.lastname}</h6>
+                                            <span className="text-muted">{tdata.person.email}</span>
                                         </div>
                                     </div>
                                 </td>
-                                <td>{tdata.email}</td>
+                                <td>{tdata.person.email}</td>
 
                                 <td>{tdata.role.name}</td>
                                 <td><Link to={`/edit-user/${tdata.id}`} className="btn btn-outline-primary">Edit</Link></td>

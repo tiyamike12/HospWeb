@@ -11,6 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import 'react-s-alert/dist/s-alert-default.css';
 import 'react-s-alert/dist/s-alert-css-effects/slide.css';
 
+
 ReactDOM.render(<Suspense fallback={<Loader/>}>
         <HashRouter>
             <AuthContextProvider>

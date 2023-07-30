@@ -2,45 +2,30 @@ import {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {Button, Card, CardBody, CardTitle, Col, Form, FormGroup, FormText, Input, Label, Row} from "reactstrap";
-import {toast} from "react-toastify";
+import {ToastContainer, toast} from "react-toastify";
 import Alert from "react-s-alert";
 const BASE_URL = process.env.REACT_APP_API_URL;
 
-function NewAppointment() {
+const ChangePassword = () => {
     const [disable, setDisable] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
-    const [doctors, setDoctors] = useState([]);
-    const [patients, setPatients] = useState([]);
 
-    const [appointment, setAppointment] = useState({
-        patient_id: '',
-        user_id: '',
-        appointment_date: '',
-        appointment_time: '',
-        purpose: '',
+    const [changePassword, setChangePassword] = useState({
+        old_password: '',
+        new_password: '',
+        new_password_confirmation: '',
     });
 
-    useEffect(() => {
-        axios.get(`${BASE_URL}/doctors`)
-            .then(response => setDoctors(response.data))
-            .catch(error => console.log(error));
-    }, []);
-
-    useEffect(() => {
-        axios.get(`${BASE_URL}/patients`)
-            .then(response => setPatients(response.data))
-            .catch(error => console.log(error));
-    }, []);
     const handleSubmit = async (e) => {
         setIsLoading(true)
         setDisable(true)
         e.preventDefault();
         try {
-            await axios.post(`${BASE_URL}/appointments`, appointment)
-                .then(res => toast.success("Appointment Record created successfully"));
-            navigate('/appointments');
-            Alert.success('Appointment Record added successfully!');
+            await axios.post(`${BASE_URL}/change-password`, changePassword)
+                .then(res => toast.success("Password changed successfully"));
+            navigate('/starter');
+            Alert.success('Password changed successfully!');
 
         } catch (error) {
             if (error.response) {
@@ -57,7 +42,6 @@ function NewAppointment() {
                 } else if (error.response.status === 401) {
                     handleUnauthorizedError(responseData.message);
                 } else if (error.response.status === 500) {
-                    console.error(error)
                     handleInternalServerError(responseData.message);
                 } else {
                     // Handle other errors with unknown status codes
@@ -67,13 +51,13 @@ function NewAppointment() {
                 // Handle errors without response data (network errors, etc.)
                 handleNetworkError();
             }
-            //console.log(error);
         }
 
         setIsLoading(false)
         setDisable(false)
     };
 
+    // Function to display validation errors as toast messages
     const displayValidationErrors = (errors) => {
         for (const errorField in errors) {
             const errorMessage = errors[errorField].join('\n');
@@ -107,7 +91,7 @@ function NewAppointment() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setAppointment(prevState => ({
+        setChangePassword(prevState => ({
             ...prevState,
             [name]: value
         }));
@@ -122,77 +106,49 @@ function NewAppointment() {
                 <Card>
                     <CardTitle tag="h6" className="border-bottom p-3 mb-0">
                         <i className="bi bi-bell me-2"> </i>
-                        Create an Appointment
+                        Change Password
                     </CardTitle>
                     <CardBody>
                         <Form onSubmit={handleSubmit}>
-                            <FormGroup>
-                                <Label for="user_id">Select Doctor</Label>
-                                <select id="user_id" name="user_id"
-                                        className="form-control"
-                                        value={appointment.user_id}
-                                        onChange={handleChange}>
-                                    <option value="">Please select a value</option>
-                                    {doctors.map(doctor => (
-                                        <option key={doctor.id} value={doctor.id}>{doctor.person.firstname} {doctor.person.lastname}</option>
-                                    ))}
-                                </select>
-
-                            </FormGroup>
 
                             <FormGroup>
-                                <Label for="patient_id">Select Patient</Label>
-                                <select id="patient_id" name="patient_id"
-                                        className="form-control"
-                                        value={appointment.patient_id}
-                                        onChange={handleChange}>
-                                    <option value="">Please select a value</option>
-                                    {patients.map(patient => (
-                                        <option key={patient.id} value={patient.id}>{patient.firstname} {patient.surname}</option>
-                                    ))}
-                                </select>
-
-                            </FormGroup>
-                            <FormGroup>
-                                <Label for="appointment_date">Appointment Date</Label>
+                                <Label for="old_password">Old Password</Label>
                                 <Input
-                                    id="appointment_date"
-                                    name="appointment_date"
-                                    placeholder="Appointment Date"
-                                    type="date"
-                                    value={appointment.appointment_date}
+                                    id="old_password"
+                                    name="old_password"
+                                    placeholder="Billing Date"
+                                    type="password"
+                                    value={changePassword.old_password}
                                     onChange={handleChange}
                                 />
                             </FormGroup>
                             <FormGroup>
-                                <Label for="appointment_time">Appointment Time</Label>
+                                <Label for="new_password">New Password</Label>
                                 <Input
-                                    id="appointment_time"
-                                    name="appointment_time"
-                                    placeholder="Appointment Time"
-                                    type="time"
-                                    value={appointment.appointment_time}
+                                    id="new_password"
+                                    name="new_password"
+                                    placeholder="New Password"
+                                    type="password"
+                                    value={changePassword.new_password}
                                     onChange={handleChange}
                                 />
                             </FormGroup>
-
 
                             <FormGroup>
-                                <Label for="purpose">Purpose</Label>
+                                <Label for="new_password_confirmation">Confirm Password</Label>
                                 <Input
-                                    id="purpose"
-                                    name="purpose"
-                                    placeholder="Purpose"
-                                    type="text"
-                                    value={appointment.purpose}
+                                    id="new_password_confirmation"
+                                    name="new_password_confirmation"
+                                    placeholder="Confirm Password"
+                                    type="password"
+                                    value={changePassword.new_password_confirmation}
                                     onChange={handleChange}
                                 />
                             </FormGroup>
-
 
 
                             <Button type="submit" className="btn btn-success"  disabled={disable}>
-                                Add Patient&emsp;
+                                Update Password&emsp;
                                 {isLoading && <span className="spinner-border spinner-border-sm me-1"></span> }
                             </Button>
                         </Form>
@@ -200,10 +156,11 @@ function NewAppointment() {
                 </Card>
             </Col>
             <Alert stack={{ limit: 5 }} />
+            <ToastContainer />
 
         </Row>
 
     );
 }
 
-export default NewAppointment;
+export default ChangePassword;

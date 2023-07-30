@@ -14,15 +14,15 @@ const navigation = [
         icon: "bi bi-bell",
     },
     {
-        title: "Wards",
-        href: "/wards",
+        title: "Availability",
+        href: "/availability",
         icon: "bi bi-patch-check",
     },
-    {
-        title: "Inventory",
-        href: "/inventories",
-        icon: "bi bi-hdd-stack",
-    },
+    // {
+    //     title: "Inventory",
+    //     href: "/inventories",
+    //     icon: "bi bi-hdd-stack",
+    // },
     {
         title: "Appointments",
         href: "/appointments",

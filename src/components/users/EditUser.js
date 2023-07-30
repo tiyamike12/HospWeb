@@ -4,7 +4,6 @@ import axios from 'axios';
 import { Button, Card, CardBody, CardTitle, Col, Form, FormGroup, FormText, Input, Label, Row } from "reactstrap";
 import { toast } from "react-toastify";
 import Alert from "react-s-alert";
-import validator from 'validator';
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -13,21 +12,17 @@ function EditUser() {
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const [roles, setRoles] = useState([]);
-    const [selectedItem, setSelectedItem] = useState('');
-    const [formData, setFormData] = useState({
-        name: '',
+    const [user, setUser] = useState({
         email: '',
-        phone_number: '',
         password: '',
+        phone: '',
         role_id: '',
-    });
-
-    const [errors, setErrors] = useState({
-        name: '',
-        email: '',
-        phone_number: '',
-        password: '',
-        role_id: '',
+        firstname: '',
+        lastname: '',
+        date_of_birth: '',
+        gender: '',
+        physical_address:'',
+        job_title:''
     });
 
     const { id } = useParams();
@@ -36,11 +31,16 @@ function EditUser() {
         axios.get(`${BASE_URL}/users/${id}`)
             .then(response => {
                 const userData = response.data;
-                setFormData({
-                    name: userData.name,
-                    email: userData.email,
-                    phone_number: userData.phone_number,
-                    password: '',
+                setUser({
+                    firstname: userData.person.firstname,
+                    lastname: userData.person.lastname,
+                    // username: userData.username,
+                    physical_address: userData.person.physical_address,
+                    gender: userData.person.gender,
+                    date_of_birth: userData.person.date_of_birth,
+                    email: userData.person.email,
+                    phone: userData.person.phone,
+                    job_title: userData.person.job_title,
                     role_id: userData.role_id
                 });
                 console.log(response.data)
@@ -55,59 +55,48 @@ function EditUser() {
             .catch(error => console.log(error));
     }, []);
 
-    const handleInputChange = e => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    }
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setUser(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        const errors = {};
-
-        if (!formData.name.trim()) {
-            errors.name = 'User Name is required';
-        }
-
-        if (!formData.email.trim()) {
-            errors.email = 'Email is required';
-        } else if (!validator.isEmail(formData.email)) {
-            errors.email = 'Email must be a valid email';
-        }
-
-        if (!formData.password) {
-            errors.password = 'Password is required';
-        }
-
-        if (!formData.phone_number.trim()) {
-            errors.phone_number = 'Phone Number is required';
-        } else if (!validator.isNumeric(formData.phone_number)) {
-            errors.phone_number = 'Phone Number must be numeric';
-        }
-
-        if (!formData.role_id) {
-            errors.role_id = 'Role is required';
-        }
-
-        if (Object.keys(errors).length) {
-            setFormData({ ...formData });
-            return;
-        }
 
         setIsLoading(true)
         setDisable(true)
 
         try {
-            console.log("Form data updating " + JSON.stringify(formData));
-            await axios.patch(`${BASE_URL}/users/${id}`, formData);
+            console.log(user)
+            await axios.patch(`${BASE_URL}/users/${id}`, user);
             Alert.success('User updated successfully!');
             navigate('/users');
         } catch (error) {
-            if (error.response && error.response.status === 422) {
-                setFormData({ ...formData, errors: error.response.data.errors });
-                console.log(error.response.data.message);
-                console.log("Errors happening here hehehe")
+            if (error.response) {
+                const responseData = error.response.data;
+
+                if (error.response.status === 422) {
+                    // Handle validation errors
+                    if (responseData.errors) {
+                        displayValidationErrors(responseData.errors);
+                    } else {
+                        console.log('Validation error occurred:', responseData.message);
+                        console.log('Default validation error message:', responseData.message);
+                    }
+                } else if (error.response.status === 401) {
+                    handleUnauthorizedError(responseData.message);
+                } else if (error.response.status === 500) {
+                    handleInternalServerError(responseData.message);
+                } else {
+                    // Handle other errors with unknown status codes
+                    handleOtherError();
+                }
             } else {
-                console.error(error)
+                // Handle errors without response data (network errors, etc.)
+                handleNetworkError();
             }
         }
 
@@ -115,14 +104,35 @@ function EditUser() {
         setDisable(false)
     };
 
-    const getSelectClassName = name => {
-        if (formData.errors[name]) {
-            return 'form-control is-invalid';
-        } else if (formData[name]) {
-            return 'form-control is-valid';
-        } else {
-            return 'form-control';
+    const displayValidationErrors = (errors) => {
+        for (const errorField in errors) {
+            const errorMessage = errors[errorField].join('\n');
+            toast.error(errorMessage);
         }
+    };
+
+    // Function to handle unauthorized errors
+    const handleUnauthorizedError = (message) => {
+        toast.error('Unauthorized: Please log in again.');
+        // Redirect to login page or handle unauthorized error as needed
+    };
+
+    // Function to handle internal server errors
+    const handleInternalServerError = (message) => {
+        toast.error('Internal Server Error: Please try again later.');
+        // Handle internal server error as needed
+    };
+
+    // Function to handle other errors with unknown status codes
+    const handleOtherError = () => {
+        toast.error('An unexpected error occurred. Please try again later.');
+        // Handle other errors as needed
+    };
+
+    // Function to handle network errors (when no response data is available)
+    const handleNetworkError = () => {
+        toast.error('Network Error: Please check your internet connection and try again.');
+        // Handle network error as needed
     };
 
     return (
@@ -139,32 +149,44 @@ function EditUser() {
                     <CardBody>
                         <Form onSubmit={handleSubmit} autoComplete="off">
                             <FormGroup>
-                                <Label for="name">Username</Label>
+                                <Label for="firstname">Firstname</Label>
                                 <Input
-                                    id="name"
-                                    name="name"
-                                    placeholder="Username"
+                                    id="firstname"
+                                    name="firstname"
+                                    placeholder="Firstname"
                                     type="text"
-                                    value={formData.name}
-                                    // valid={!!user.name && !user.errors.name}
-                                    // invalid={!!user.errors.name}
-                                    onChange={handleInputChange}
+                                    autoComplete="off"
+                                    value={user.firstname}
+                                    onChange={handleChange}
                                 />
-                                {/*{user.errors.name && <span className="text-danger" style={{ marginTop: 10}}>{user.errors.name}</span>}*/}
+
                             </FormGroup>
+
                             <FormGroup>
-                                <Label for="phone_number">Phone</Label>
+                                <Label for="lastname">Lastname</Label>
                                 <Input
-                                    id="phone_number"
-                                    name="phone_number"
-                                    placeholder="Phone"
-                                    type="number"
-                                    value={formData.phone_number}
-                                    // valid={!!user.phone_number && !user.errors.phone_number}
-                                    // invalid={!!user.errors.phone_number}
-                                    onChange={handleInputChange}
+                                    id="lastname"
+                                    name="lastname"
+                                    placeholder="Lastname"
+                                    type="text"
+                                    autoComplete="off"
+                                    value={user.lastname}
+                                    onChange={handleChange}
                                 />
-                                {/*{user.errors.phone_number && <span className="text-danger" style={{ marginTop: 10}}>{user.errors.phone_number}</span>}*/}
+
+                            </FormGroup>
+
+                            <FormGroup>
+                                <Label for="phone">Phone</Label>
+                                <Input
+                                    id="phone"
+                                    name="phone"
+                                    placeholder="Phone"
+                                    type="text"
+                                    autoComplete="off"
+                                    value={user.phone}
+                                    onChange={handleChange}
+                                />
                             </FormGroup>
                             <FormGroup>
                                 <Label for="email">Email</Label>
@@ -173,41 +195,71 @@ function EditUser() {
                                     name="email"
                                     placeholder="Email"
                                     type="email"
-                                    value={formData.email}
-                                    // valid={!!user.email && !user.errors.email}
-                                    // invalid={!!user.errors.email}
-                                    onChange={handleInputChange}
+                                    autoComplete="off"
+                                    value={user.email}
+                                    onChange={handleChange}
                                 />
-                                {/*{user.errors.email && <span className="text-danger" style={{ marginTop: 10}}>{user.errors.email}</span>}*/}
-                            </FormGroup>
-                            <FormGroup>
-                                <Label for="password">Password</Label>
-                                <Input
-                                    id="password"
-                                    name="password"
-                                    placeholder="password placeholder"
-                                    type="password"
-                                    value={formData.password}
-                                    // valid={!!user.password && !user.errors.password}
-                                    // invalid={!!user.errors.password}
-                                    onChange={handleInputChange}
-                                />
-                                {/*{user.errors.password && <span className="text-danger" style={{ marginTop: 10}}>{user.errors.password}</span>}*/}
 
                             </FormGroup>
+
+
                             <FormGroup>
-                                <Label for="role_id">Role</Label>
-                                <select
-                                    id="role_id"
-                                    name="role_id"
-                                    value={formData.role_id}
-                                    className='form-control'
-                                    onChange={handleInputChange}
-                                >
-                                    <option value="">Select Role</option>
-                                    {roles.map(role => <option key={role.id} value={role.id}>{role.name}</option>)}
+                                <Label for="role_id">Select Role</Label>
+                                <select id="role_id" name="role_id"
+                                        className="form-control"
+                                        value={user.role_id}
+                                        onChange={handleChange}>
+                                    <option value="">Please select a value</option>
+                                    {roles.map(role => (
+                                        <option key={role.id} value={role.id}>{role.name}</option>
+                                    ))}
                                 </select>
-                                {/* {formData.errors.role_id && <div className="invalid-feedback">{formData.errors.role_id}</div>} */}
+
+                            </FormGroup>
+
+                            <FormGroup>
+                                <Label for="gender">Select Gender</Label>
+                                <select id="gender" name="gender" className="form-select" value={user.gender} required
+                                        onChange={handleChange}>
+                                    <option value="">Please select a value</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                </select>
+                            </FormGroup>
+
+                            <FormGroup>
+                                <Label for="date_of_birth">Date of Birth</Label>
+                                <Input
+                                    id="date_of_birth"
+                                    name="date_of_birth"
+                                    type="date"
+                                    value={user.date_of_birth}
+                                    onChange={handleChange}
+                                />
+                            </FormGroup>
+
+                            <FormGroup>
+                                <Label for="physical_address">Physical Address</Label>
+                                <Input
+                                    id="physical_address"
+                                    name="physical_address"
+                                    placeholder="Address"
+                                    type="text"
+                                    value={user.physical_address}
+                                    onChange={handleChange}
+                                />
+                            </FormGroup>
+
+                            <FormGroup>
+                                <Label for="job_title">Title/Specialization</Label>
+                                <Input
+                                    id="job_title"
+                                    name="job_title"
+                                    placeholder="Title/Specialization"
+                                    type="text"
+                                    value={user.job_title}
+                                    onChange={handleChange}
+                                />
                             </FormGroup>
 
                             <Button type="submit" className="btn btn-success" disabled={disable}>

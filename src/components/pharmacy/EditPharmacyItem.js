@@ -14,7 +14,9 @@ function EditPharmacyItem() {
         item_name: '',
         description: '',
         quantity_available: '',
-        unit_price: ''
+        unit_price: '',
+        initial_quantity:'',
+        threshold_quantity:''
     });
     const { id } = useParams();
 
@@ -27,6 +29,8 @@ function EditPharmacyItem() {
                     description: pharmacyData.description,
                     quantity_available: pharmacyData.quantity_available,
                     unit_price: pharmacyData.unit_price,
+                    initial_quantity:pharmacyData.initial_quantity,
+                    threshold_quantity:pharmacyData.threshold_quantity
                 });
                 console.log(response.data)
                 //setIsLoaded(true);
@@ -118,6 +122,29 @@ function EditPharmacyItem() {
                                     placeholder="Unit Price"
                                     type="number"
                                     value={pharmacyItem.unit_price}
+                                    onChange={handleChange}
+                                />
+                            </FormGroup>
+
+
+                            <FormGroup>
+                                <Label for="initial_quantity">Initial Quantity</Label>
+                                <Input
+                                    id="initial_quantity"
+                                    name="initial_quantity"
+                                    type="number"
+                                    value={pharmacyItem.initial_quantity}
+                                    onChange={handleChange}
+                                />
+                            </FormGroup>
+
+                            <FormGroup>
+                                <Label for="threshold_quantity">Threshold Quantity</Label>
+                                <Input
+                                    id="threshold_quantity"
+                                    name="threshold_quantity"
+                                    type="number"
+                                    value={pharmacyItem.threshold_quantity}
                                     onChange={handleChange}
                                 />
                             </FormGroup>

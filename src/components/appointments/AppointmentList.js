@@ -1,4 +1,4 @@
-import {Button, Card, CardBody, CardSubtitle, CardTitle, Table} from "reactstrap";
+import {Button, Card, CardBody, CardSubtitle, CardTitle, Col, Input, Row, Table} from "reactstrap";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {Link, useNavigate} from "react-router-dom";
@@ -14,6 +14,7 @@ const AppointmentList = () => {
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
     const [selectedItemId, setSelectedItemId] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
         axios.get(  `${BASE_URL}/appointments`)
@@ -38,16 +39,45 @@ const AppointmentList = () => {
             .catch(error => console.log(error));
     };
 
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
+    };
+
+    // Function to filter the patient list based on the search query
+    const filteredListData = listData.filter((appointment) => {
+        const doctorFullName = `${appointment.person.firstname} ${appointment.person.lastname}`.toLowerCase();
+        const patientFullName = `${appointment.patient.firstname} ${appointment.patient.surname}`.toLowerCase();
+        return (
+            doctorFullName.includes(searchQuery.toLowerCase()) ||
+            patientFullName.includes(searchQuery.toLowerCase())
+        );
+    });
+
     console.log(listData)
 
     return (
         <div>
+            <Row className="mb-3">
+                <Col xs="4" >
+                    <Input
+                        type="text"
+                        placeholder="Search patients..."
+                        value={searchQuery}
+                        className="col-4 mr-2"
+                        onChange={handleSearchChange}
+                    />
+                </Col>
+
+            </Row>
             {isLoaded ? (
                 <Card>
 
 
                     <CardBody>
                         <CardTitle tag="h5">Appointments Listing</CardTitle>
+                        <div className="d-flex justify-content-end">
+                            <Link to={'/appointments-calendar'} className="btn btn-primary">Appointments Calendar</Link>
+                        </div>
                         <div className="d-flex justify-content-end">
                             <Link to={'/new-appointment'} className="btn btn-primary">Add New Appointment Record</Link>
                         </div>
@@ -63,21 +93,22 @@ const AppointmentList = () => {
                                 <th>Appointment Date</th>
                                 <th>Time</th>
                                 <th>Purpose</th>
-
+                                <th>Status</th>
                                 <th>Edit</th>
                                 <th>Delete</th>
 
                             </tr>
                             </thead>
                             <tbody>
-                            {listData.map((tdata) => (
+                            {filteredListData.map((tdata) => (
                                 <tr key={tdata.id} className="border-top">
-                                    <td>{tdata.doctor.person.firstname} {tdata.doctor.person.lastname}</td>
+                                    <td>{tdata.person.firstname} {tdata.person.lastname}</td>
                                     <td>{tdata.patient.firstname} {tdata.patient.surname}</td>
                                     <td>{tdata.appointment_date}</td>
                                     <td>{tdata.appointment_time}</td>
 
                                     <td>{tdata.purpose}</td>
+                                    <td>{tdata.status}</td>
                                     <td><Link to={`/edit-appointment/${tdata.id}`} className="btn btn-outline-primary">Edit</Link></td>
                                     <td><button className="btn btn-danger" onClick={() => {
                                         setSelectedItemId(tdata.id);

@@ -12,9 +12,11 @@ function EditMedicalRecord() {
     const navigate = useNavigate();
     const [doctors, setDoctors] = useState([]);
     const [patients, setPatients] = useState([]);
+    const [labTests, setLabTests] = useState([]);
+
     const [medicalRecord, setMedicalRecord] = useState({
         patient_id: '',
-        doctor_id: '',
+        user_id: '',
         medical_notes: '',
         diagnoses: '',
         prescriptions: '',
@@ -35,12 +37,18 @@ function EditMedicalRecord() {
     }, []);
 
     useEffect(() => {
+        axios.get(`${BASE_URL}/lab-tests`)
+            .then(response => setLabTests(response.data))
+            .catch(error => console.log(error));
+    }, []);
+
+    useEffect(() => {
         axios.get(`${BASE_URL}/medical-records/${id}`)
             .then(response => {
                 const medicalData = response.data;
                 setMedicalRecord({
                     patient_id: medicalData.patient_id,
-                    doctor_id: medicalData.doctor_id,
+                    user_id: medicalData.user_id,
                     medical_notes: medicalData.medical_notes,
                     diagnoses: medicalData.diagnoses,
                     prescriptions: medicalData.prescriptions,
@@ -82,6 +90,14 @@ function EditMedicalRecord() {
         setDisable(false)
     };
 
+    const handleLabResultsChange = (e) => {
+        const selectedTests = Array.from(e.target.selectedOptions, option => option.value);
+        setMedicalRecord(prevState => ({
+            ...prevState,
+            lab_results: selectedTests
+        }));
+    };
+
     return (
         <Row>
             <Col>
@@ -97,14 +113,14 @@ function EditMedicalRecord() {
                         <Form onSubmit={handleSubmit}>
 
                             <FormGroup>
-                                <Label for="doctor_id">Select Doctor</Label>
-                                <select id="doctor_id" name="doctor_id"
+                                <Label for="user_id">Select Doctor</Label>
+                                <select id="user_id" name="user_id"
                                         className="form-control"
-                                        value={medicalRecord.doctor_id}
+                                        value={medicalRecord.user_id}
                                         onChange={handleChange}>
                                     <option value="">Please select a value</option>
                                     {doctors.map(doctor => (
-                                        <option key={doctor.id} value={doctor.id}>{doctor.firstname} {doctor.lastname}</option>
+                                        <option key={doctor.id} value={doctor.id}>{doctor.username} </option>
                                     ))}
                                 </select>
                                 {/*{user.errors.role_id && <span className="text-danger" style={{ marginTop: 10}}>{user.errors.role_id}</span>}*/}
@@ -166,11 +182,15 @@ function EditMedicalRecord() {
                                 <Input
                                     id="lab_results"
                                     name="lab_results"
-                                    placeholder="Lab Results"
-                                    type="text"
+                                    type="select"
+                                    multiple
                                     value={medicalRecord.lab_results}
-                                    onChange={handleChange}
-                                />
+                                    onChange={handleLabResultsChange}
+                                >
+                                    {labTests.map(test => (
+                                        <option key={test.id} value={test.id}>{test.test_name}</option>
+                                    ))}
+                                </Input>
                             </FormGroup>
 
 

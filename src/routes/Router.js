@@ -55,6 +55,11 @@ const EditDepartment = lazy(() => import("../components/department/EditDepartmen
 const NewInsuranceProvider = lazy(() => import("../components/insurance-providers/NewInsuranceProvider"));
 const InsuranceProvidersList = lazy(() => import("../components/insurance-providers/InsuranceProvidersList"));
 const EditInsuranceProvider = lazy(() => import("../components/insurance-providers/EditInsuranceProvider"));
+const ChangePassword = lazy(() => import("../components/auth/ChangePassword"));
+const CalendarView = lazy(() => import("../components/appointments/CalendarView"));
+const Availability = lazy(() => import("../components/doctor/Availability"));
+const SetAvailability = lazy(() => import("../components/doctor/SetAvailability"));
+const AvailableDoctors = lazy(() => import("../components/doctor/AvailableDoctors"));
 
 /*****Routes******/
 
@@ -64,6 +69,8 @@ const ThemeRoutes = [
         element: <PrivateRoute><FullLayout/></PrivateRoute>,
         children: [
             {path: "/", element: <Navigate to="/starter"/>},
+            {path: "/change-password", exact: true, element: <ChangePassword/>},
+
             {path: "/starter", exact: true, element: <Starter/>},
             {path: "/about", exact: true, element: <About/>},
             {path: "/alerts", exact: true, element: <Alerts/>},
@@ -112,6 +119,11 @@ const ThemeRoutes = [
             {path: "/new-insurance-provider", exact: true, element: <NewInsuranceProvider/>},
             {path: "/insurance-providers", exact: true, element: <InsuranceProvidersList/>},
             {path: "/edit-insurance-providers/:id", exact: true, element: <EditInsuranceProvider/>},
+            {path: "/appointments-calendar", exact: true, element: <CalendarView/>},
+            {path: "/availability", exact: true, element: <Availability/>},
+            {path: "/edit-availability/:id", exact: true, element: <SetAvailability/>},
+            {path: "/available-doctors", exact: true, element: <AvailableDoctors/>},
+
         ],
     },
     {path: "/login", exact: true, element: <Login/>,},

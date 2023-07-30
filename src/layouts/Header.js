@@ -113,8 +113,7 @@ const Header = () => {
                         <DropdownItem>My Account</DropdownItem>
                         <DropdownItem>Edit Profile</DropdownItem>
                         <DropdownItem divider/>
-                        <DropdownItem>My Balance</DropdownItem>
-                        <DropdownItem>Inbox</DropdownItem>
+                        <DropdownItem><Link to="/change-password">Change Password</Link></DropdownItem>
                         <DropdownItem onClick={() => handleLogout()}>Logout</DropdownItem>
                     </DropdownMenu>
                 </Dropdown>

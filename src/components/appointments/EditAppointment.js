@@ -14,11 +14,20 @@ function EditAppointment() {
     const [patients, setPatients] = useState([]);
     const [appointment, setAppointment] = useState({
         patient_id: '',
-        doctor_id: '',
+        user_id: '',
         appointment_date: '',
         appointment_time: '',
         purpose: '',
+        status: ''
     });
+
+    const [statusOptions] = useState([
+        'scheduled',
+        'in progress',
+        'completed',
+        'canceled',
+    ]);
+
     const { id } = useParams();
 
     useEffect(() => {
@@ -39,10 +48,11 @@ function EditAppointment() {
                 const appointmentData = response.data;
                 setAppointment({
                     patient_id: appointmentData.patient_id,
-                    doctor_id: appointmentData.doctor_id,
+                    user_id: appointmentData.user_id,
                     appointment_date: appointmentData.appointment_date,
                     appointment_time: appointmentData.appointment_time,
                     purpose: appointmentData.purpose,
+                    status: appointmentData.status,
                 });
                 console.log(response.data)
                 //setIsLoaded(true);
@@ -66,17 +76,66 @@ function EditAppointment() {
             Alert.success('Appointment updated successfully!');
             navigate('/appointments');
         } catch (error) {
-            if (error.response.status === 422) {
-                console.log(error.response.data.message);
-                console.log("Errors happening here hehehe")
+            if (error.response) {
+                const responseData = error.response.data;
+
+                if (error.response.status === 422) {
+                    // Handle validation errors
+                    if (responseData.errors) {
+                        displayValidationErrors(responseData.errors);
+                    } else {
+                        console.log('Validation error occurred:', responseData.message);
+                        console.log('Default validation error message:', responseData.message);
+                    }
+                } else if (error.response.status === 401) {
+                    handleUnauthorizedError(responseData.message);
+                } else if (error.response.status === 500) {
+                    console.error(error)
+                    handleInternalServerError(responseData.message);
+                } else {
+                    // Handle other errors with unknown status codes
+                    handleOtherError();
+                }
             } else {
-                console.error(error)
+                // Handle errors without response data (network errors, etc.)
+                handleNetworkError();
             }
             //console.log(error);
         }
 
         setIsLoading(false)
         setDisable(false)
+    };
+
+    const displayValidationErrors = (errors) => {
+        for (const errorField in errors) {
+            const errorMessage = errors[errorField].join('\n');
+            toast.error(errorMessage);
+        }
+    };
+
+    // Function to handle unauthorized errors
+    const handleUnauthorizedError = (message) => {
+        toast.error('Unauthorized: Please log in again.');
+        // Redirect to login page or handle unauthorized error as needed
+    };
+
+    // Function to handle internal server errors
+    const handleInternalServerError = (message) => {
+        toast.error('Internal Server Error: Please try again later.');
+        // Handle internal server error as needed
+    };
+
+    // Function to handle other errors with unknown status codes
+    const handleOtherError = () => {
+        toast.error('An unexpected error occurred. Please try again later.');
+        // Handle other errors as needed
+    };
+
+    // Function to handle network errors (when no response data is available)
+    const handleNetworkError = () => {
+        toast.error('Network Error: Please check your internet connection and try again.');
+        // Handle network error as needed
     };
 
     return (
@@ -94,14 +153,14 @@ function EditAppointment() {
                         <Form onSubmit={handleSubmit}>
 
                             <FormGroup>
-                                <Label for="doctor_id">Select Doctor</Label>
-                                <select id="doctor_id" name="doctor_id"
+                                <Label for="user_id">Select Doctor</Label>
+                                <select id="user_id" name="user_id"
                                         className="form-control"
-                                        value={appointment.doctor_id}
+                                        value={appointment.user_id}
                                         onChange={handleChange}>
                                     <option value="">Please select a value</option>
                                     {doctors.map(doctor => (
-                                        <option key={doctor.id} value={doctor.id}>{doctor.firstname} {doctor.lastname}</option>
+                                        <option key={doctor.id} value={doctor.id}>{doctor.person.firstname} {doctor.person.lastname}</option>
                                     ))}
                                 </select>
                                 {/*{user.errors.role_id && <span className="text-danger" style={{ marginTop: 10}}>{user.errors.role_id}</span>}*/}
@@ -158,6 +217,20 @@ function EditAppointment() {
                                 />
                             </FormGroup>
 
+                            <FormGroup>
+                                <Label for="status">Select Status</Label>
+                                <select id="status" name="status"
+                                        className="form-control"
+                                        value={appointment.status}
+                                        onChange={handleChange}>
+                                    <option value="">Please select a value</option>
+                                    {statusOptions.map((status) => (
+                                        <option key={status} value={status}>
+                                            {status}
+                                        </option>
+                                    ))}
+                                </select>
+                            </FormGroup>
 
                             <Button type="submit" className="btn btn-success"  disabled={disable}>
                                 Update Appointment&emsp;

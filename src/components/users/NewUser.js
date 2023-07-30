@@ -2,63 +2,28 @@ import {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {Button, Card, CardBody, CardTitle, Col, Form, FormGroup, FormText, Input, Label, Row} from "reactstrap";
-import {toast} from "react-toastify";
+import {ToastContainer, toast} from "react-toastify";
 import Alert from "react-s-alert";
 import validator from 'validator';
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
-// function validateFields(values, validationRules) {
-//     let errors = {};
-//     Object.keys(validationRules).forEach((fieldName) => {
-//         if (validationRules[fieldName].required && !values[fieldName]) {
-//             errors[fieldName] = `${fieldName} is required`;
-//         } else if (
-//             validationRules[fieldName].validator &&
-//             !validationRules[fieldName].validator(values[fieldName])
-//         ) {
-//             errors[fieldName] = validationRules[fieldName].errorMessage;
-//         }
-//     });
-//     return errors;
-// }
-//
-// function validateInput(values) {
-//     const validationRules = {
-//         name: {
-//             required: true,
-//         },
-//         email: {
-//             validator: (value) => validator.isEmail(value),
-//             errorMessage: 'Invalid email address',
-//         },
-//         password: {
-//             required: true,
-//         },
-//         phone_number: {
-//             validator: (value) => validator.isNumeric(value),
-//             errorMessage: 'Phone Number must be numeric'
-//         },
-//         role_id: {
-//             required: true
-//         }
-//     };
-//
-//     return validateFields(values, validationRules);
-// }
 function CreateUser() {
     const [disable, setDisable] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [roles, setRoles] = useState([]);
-    const [selectedItem, setSelectedItem] = useState('');
-    const navigate = useNavigate();
+   const navigate = useNavigate();
     const [user, setUser] = useState({
-        name: '',
         email: '',
-        password: '',
-        phone_number: '',
+        // password: '',
+        phone: '',
         role_id: '',
-        errors: {}
+        firstname: '',
+        lastname: '',
+        date_of_birth: '',
+        gender: '',
+        physical_address:'',
+        job_title:''
     });
     //const [errors, setErrors] = useState({});
     useEffect(() => {
@@ -71,57 +36,40 @@ function CreateUser() {
 
         e.preventDefault();
 
-        const errors = {};
-
-        if (validator.isEmpty(user.name)) {
-            errors.name = 'User Name is required';
-        }
-
-        if (validator.isEmpty(user.email)) {
-            errors.email = 'Email is required';
-        }
-
-        if (!validator.isEmail(user.email)) {
-            errors.email = 'Email must be a valid email';
-        }
-
-        if (validator.isEmpty(user.password)) {
-            errors.password = 'Password is required';
-        }
-
-        if (validator.isEmpty(user.phone_number)) {
-            errors.phone_number = 'Phone Number is required';
-        }
-
-        if (!validator.isNumeric(user.phone_number)) {
-            errors.phone_number = 'Phone Number must be numeric';
-        }
-
-        if (validator.isEmpty(user.role_id)) {
-            errors.role_id = 'Role is required';
-        }
-
-        if (Object.keys(errors).length) {
-            setUser({ ...user, errors });
-            return;
-        }
-        // const validationErrors = validateInput(user);
-        // setErrors(validationErrors);
         setIsLoading(true)
         setDisable(true)
 
         try {
+            console.log(user)
             await axios.post(`${BASE_URL}/users`, user)
                 .then(res => toast.success("User created successfully"));
             navigate('/users');
             Alert.success('User added successfully!');
 
         } catch (error) {
-            if (error.response.status === 422) {
-                console.log(error.response.data.message);
-                console.log("Errors happening here hehehe")
+            if (error.response) {
+                const responseData = error.response.data;
+
+                if (error.response.status === 422) {
+                    // Handle validation errors
+                    if (responseData.errors) {
+                        displayValidationErrors(responseData.errors);
+                    } else {
+                        console.log('Validation error occurred:', responseData.message);
+                        console.log('Default validation error message:', responseData.message);
+                    }
+                } else if (error.response.status === 401) {
+                    handleUnauthorizedError(responseData.message);
+                } else if (error.response.status === 500) {
+                    console.error(error)
+                    handleInternalServerError(responseData.message);
+                } else {
+                    // Handle other errors with unknown status codes
+                    handleOtherError();
+                }
             } else {
-                console.error(error)
+                // Handle errors without response data (network errors, etc.)
+                handleNetworkError();
             }
             //console.log(error);
         }
@@ -130,19 +78,45 @@ function CreateUser() {
         setDisable(false)
     };
 
-    const handleChange = (e) => {
-        setUser({ ...user, [e.target.name]: e.target.value });
-    };
-
-    const getSelectClassName = name => {
-        if (user.errors[name]) {
-            return 'form-control is-invalid';
-        } else if (user[name]) {
-            return 'form-control is-valid';
-        } else {
-            return 'form-control';
+    const displayValidationErrors = (errors) => {
+        for (const errorField in errors) {
+            const errorMessage = errors[errorField].join('\n');
+            toast.error(errorMessage);
         }
     };
+
+    // Function to handle unauthorized errors
+    const handleUnauthorizedError = (message) => {
+        toast.error('Unauthorized: Please log in again.');
+        // Redirect to login page or handle unauthorized error as needed
+    };
+
+    // Function to handle internal server errors
+    const handleInternalServerError = (message) => {
+        toast.error('Internal Server Error: Please try again later.');
+        // Handle internal server error as needed
+    };
+
+    // Function to handle other errors with unknown status codes
+    const handleOtherError = () => {
+        toast.error('An unexpected error occurred. Please try again later.');
+        // Handle other errors as needed
+    };
+
+    // Function to handle network errors (when no response data is available)
+    const handleNetworkError = () => {
+        toast.error('Network Error: Please check your internet connection and try again.');
+        // Handle network error as needed
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setUser(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
+
     return (
         <Row>
             <Col>
@@ -157,40 +131,44 @@ function CreateUser() {
                     <CardBody>
                         <Form onSubmit={handleSubmit} autoComplete="off">
                             <FormGroup>
-                                <Label for="name">Username</Label>
+                                <Label for="firstname">Firstname</Label>
                                 <Input
-                                    id="name"
-                                    name="name"
-                                    placeholder="Username"
+                                    id="firstname"
+                                    name="firstname"
+                                    placeholder="Firstname"
                                     type="text"
                                     autoComplete="off"
-                                    value={user.name}
-                                    valid={!!user.name && !user.errors.name}
-                                    invalid={!!user.errors.name}
+                                    value={user.firstname}
                                     onChange={handleChange}
                                 />
-                                {/*{errors.name && <div>{errors.name}</div>}*/}
-
-                                {user.errors.name && <span className="text-danger" style={{ marginTop: 10}}>{user.errors.name}</span>}
 
                             </FormGroup>
+
                             <FormGroup>
-                                <Label for="phone_number">Phone</Label>
+                                <Label for="lastname">Lastname</Label>
                                 <Input
-                                    id="phone_number"
-                                    name="phone_number"
-                                    placeholder="Phone"
-                                    type="number"
+                                    id="lastname"
+                                    name="lastname"
+                                    placeholder="Lastname"
+                                    type="text"
                                     autoComplete="off"
-                                    value={user.phone_number}
-                                    valid={!!user.phone_number && !user.errors.phone_number}
-                                    invalid={!!user.errors.phone_number}
+                                    value={user.lastname}
                                     onChange={handleChange}
                                 />
-                                {/*{errors.phone_number && <div>{errors.phone_number}</div>}*/}
 
-                                {user.errors.phone_number && <span className="text-danger" style={{ marginTop: 10}}>{user.errors.phone_number}</span>}
+                            </FormGroup>
 
+                            <FormGroup>
+                                <Label for="phone">Phone</Label>
+                                <Input
+                                    id="phone"
+                                    name="phone"
+                                    placeholder="Phone"
+                                    type="text"
+                                    autoComplete="off"
+                                    value={user.phone}
+                                    onChange={handleChange}
+                                />
                             </FormGroup>
                             <FormGroup>
                                 <Label for="email">Email</Label>
@@ -201,44 +179,68 @@ function CreateUser() {
                                     type="email"
                                     autoComplete="off"
                                     value={user.email}
-                                    valid={!!user.email && !user.errors.email}
-                                    invalid={!!user.errors.email}
                                     onChange={handleChange}
                                 />
-                                {/*{errors.email && <div>{errors.email}</div>}*/}
-                                {user.errors.email && <span className="text-danger" style={{ marginTop: 10}}>{user.errors.email}</span>}
 
                             </FormGroup>
-                            <FormGroup>
-                                <Label for="password">Password</Label>
-                                <Input
-                                    id="password"
-                                    name="password"
-                                    placeholder="password placeholder"
-                                    type="password"
-                                    autoComplete="new-password"
-                                    value={user.password}
-                                    valid={!!user.password && !user.errors.password}
-                                    invalid={!!user.errors.password}
-                                    onChange={handleChange}
-                                />
-                                {/*{errors.password && <div>{errors.password}</div>}*/}
-                                {user.errors.password && <span className="text-danger" style={{ marginTop: 10}}>{user.errors.password}</span>}
 
-                            </FormGroup>
                             <FormGroup>
                                 <Label for="role_id">Select Role</Label>
                                 <select id="role_id" name="role_id"
-                                        className={getSelectClassName('role_id')}
-                                        value={selectedItem}
-                                       onChange={handleChange}>
+                                        className="form-control"
+                                        value={user.role_id}
+                                        onChange={handleChange}>
                                     <option value="">Please select a value</option>
                                     {roles.map(role => (
                                         <option key={role.id} value={role.id}>{role.name}</option>
                                     ))}
                                 </select>
-                                {user.errors.role_id && <span className="text-danger" style={{ marginTop: 10}}>{user.errors.role_id}</span>}
 
+                            </FormGroup>
+
+                            <FormGroup>
+                                <Label for="gender">Select Gender</Label>
+                                <select id="gender" name="gender" className="form-select" value={user.gender} required
+                                        onChange={handleChange}>
+                                    <option value="">Please select a value</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                </select>
+                            </FormGroup>
+
+                            <FormGroup>
+                                <Label for="date_of_birth">Date of Birth</Label>
+                                <Input
+                                    id="date_of_birth"
+                                    name="date_of_birth"
+                                    type="date"
+                                    value={user.date_of_birth}
+                                    onChange={handleChange}
+                                />
+                            </FormGroup>
+
+                            <FormGroup>
+                                <Label for="physical_address">Physical Address</Label>
+                                <Input
+                                    id="physical_address"
+                                    name="physical_address"
+                                    placeholder="Address"
+                                    type="text"
+                                    value={user.physical_address}
+                                    onChange={handleChange}
+                                />
+                            </FormGroup>
+
+                            <FormGroup>
+                                <Label for="job_title">Title/Specialization</Label>
+                                <Input
+                                    id="job_title"
+                                    name="job_title"
+                                    placeholder="Title/Specialization"
+                                    type="text"
+                                    value={user.job_title}
+                                    onChange={handleChange}
+                                />
                             </FormGroup>
 
                             <Button type="submit" className="btn btn-success"  disabled={disable}>
@@ -250,6 +252,7 @@ function CreateUser() {
                 </Card>
             </Col>
             <Alert stack={{ limit: 5 }} />
+            <ToastContainer />
 
         </Row>
 

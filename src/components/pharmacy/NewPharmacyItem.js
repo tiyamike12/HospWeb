@@ -15,7 +15,9 @@ function NewPharmacyItem() {
         item_name: '',
         description: '',
         quantity_available: '',
-        unit_price: ''
+        unit_price: '',
+        initial_quantity:'',
+        threshold_quantity:''
     });
     const handleSubmit = async (e) => {
         setIsLoading(true)
@@ -106,6 +108,29 @@ function NewPharmacyItem() {
                                     onChange={handleChange}
                                 />
                             </FormGroup>
+
+                            <FormGroup>
+                                <Label for="initial_quantity">Initial Quantity</Label>
+                                <Input
+                                    id="initial_quantity"
+                                    name="initial_quantity"
+                                    type="number"
+                                    value={pharmacyItem.initial_quantity}
+                                    onChange={handleChange}
+                                />
+                            </FormGroup>
+
+                            <FormGroup>
+                                <Label for="threshold_quantity">Threshold Quantity</Label>
+                                <Input
+                                    id="threshold_quantity"
+                                    name="threshold_quantity"
+                                    type="number"
+                                    value={pharmacyItem.threshold_quantity}
+                                    onChange={handleChange}
+                                />
+                            </FormGroup>
+
 
                             <Button type="submit" className="btn btn-success"  disabled={disable}>
                                 Add Pharmacy Item&emsp;

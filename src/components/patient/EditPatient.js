@@ -19,7 +19,6 @@ function EditPatient() {
         phone: '',
         email: '',
         physical_address: '',
-        insurance_information: '',
     });
     const { id } = useParams();
 
@@ -35,7 +34,6 @@ function EditPatient() {
                     phone: userData.phone,
                     email: userData.email,
                     physical_address: userData.physical_address,
-                    insurance_information: userData.insurance_information
 
                 });
                 console.log(response.data)
@@ -79,7 +77,7 @@ function EditPatient() {
                 <Card>
                     <CardTitle tag="h6" className="border-bottom p-3 mb-0">
                         <i className="bi bi-bell me-2"> </i>
-                        Create a Patient Record
+                        Update a Patient Record
                     </CardTitle>
                     <CardBody>
                         <Form onSubmit={handleSubmit}>
@@ -158,17 +156,7 @@ function EditPatient() {
                                     onChange={handleInputChange}
                                 />
                             </FormGroup>
-                            <FormGroup>
-                                <Label for="insurance_information">Insurance Information</Label>
-                                <Input
-                                    id="insurance_information"
-                                    name="insurance_information"
-                                    placeholder="Insurance Information"
-                                    type="text"
-                                    value={patient.insurance_information}
-                                    onChange={handleInputChange}
-                                />
-                            </FormGroup>
+
 
                             <Button type="submit" className="btn btn-success"  disabled={disable}>
                                 Update Patient&emsp;
