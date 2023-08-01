@@ -1,12 +1,12 @@
 import React, {useContext, useState} from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import useAuth from "../../context/useAuth";
 import LogoWhite from "../../assets/images/logos/laravel.png";
 import "./Login.css";
 import axios from "axios";
-import Cookies from 'js-cookie';
-import useAuth from "../../context/useAuth";
-
+import {AuthContext} from "../../context/AuthContext";
 import {toast} from "react-toastify";
+import validator from 'validator';
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 const Login = () => {
@@ -19,7 +19,7 @@ const Login = () => {
     const { login } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
-    //const { setToken } = useContext(AuthContext);
+    const { setToken } = useContext(AuthContext);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -34,27 +34,42 @@ const Login = () => {
 
             console.log(response.data)
 
-            // Assuming the API returns a token on successful login
-            const token = response.data.token;
-            if (token) {
-                // Set the token in cookies
-                Cookies.set('token', token, { expires: 7 }); // Cookie expires after 7 days
+            if (response.data.token !== undefined) {
+                const token  = response.data.token;
 
-                // Call the login function from the AuthContext to set isAuthenticated to true and store the token.
-                login(token);
+                console.log("TOKEN IS AVAILABLE")
+                //localStorage.setItem('token', token);
+                console.log(token)
+                toast.success("Login successful!")
+                navigate("/starter");
+                setToken(token);
+                localStorage.setItem('token', token);
 
-                // Redirect to /starter after successful login
-                navigate('/starter');
+                //login();
+                //console.log(response.data)
+                navigate(location.state?.from || "/starter", { replace: true });
+
             }
+            //console.log("API TOKEN: " + token)
         } catch (error) {
-            console.error(error)
-            setErrorMessages('Invalid credentials. Please try again.');
+            if (error.response.status === 401) {
+                //setErrorMessages(error.response.data.errors);
 
+                setErrorMessages("Invalid Password");
+                console.log("Unauthorized")
+            } else {
+                console.error(error)
+            }
         }
 
         setIsLoading(false)
         setDisable(false)
-
+        //const { token } = response.data;
+        // localStorage.setItem('token', token);
+        // navigate('/protected');
+        //console.log(response.data)
+        // login();
+        // navigate(location.state?.from || "/", { replace: true });
     };
 
     return (
@@ -93,7 +108,7 @@ const Login = () => {
                     </div>
 
                     {errorMessages &&
-                    <div className="alert alert-danger mt-2">{errorMessages}</div>}
+                        <div className="alert alert-danger mt-2">{errorMessages}</div>}
 
 
                     <div className="d-grid gap-2 mt-3 mb-5">
