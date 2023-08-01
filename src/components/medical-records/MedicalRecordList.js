@@ -11,18 +11,26 @@ const BASE_URL = process.env.REACT_APP_API_URL;
 const MedicalRecordList = () => {
     const [listData, setListData] = useState([]);
     const [isLoaded, setIsLoaded] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
     const [selectedItemId, setSelectedItemId] = useState(null);
 
     useEffect(() => {
-        axios.get(  `${BASE_URL}/medical-records`)
+        fetchMedicalRecords(currentPage);
+    }, [currentPage]);
+
+    const fetchMedicalRecords = (page) => {
+        setIsLoaded(false);
+        axios.get(`${BASE_URL}/medical-records?page=${page}`)
             .then(response => {
-                setListData(response.data);
+                setListData(response.data.data);
+                setTotalPages(response.data.meta.last_page);
                 setIsLoaded(true);
             })
             .catch(error => console.log(error));
-    }, []);
+    };
 
     const handleDelete = () => {
         axios.delete(`${BASE_URL}/medical-records/${selectedItemId}`)
@@ -91,6 +99,23 @@ const MedicalRecordList = () => {
                             ))}
                             </tbody>
                         </Table>
+                        <div className="d-flex justify-content-center">
+                            <button
+                                className="btn btn-outline-primary mx-2"
+                                disabled={currentPage === 1}
+                                onClick={() => setCurrentPage(currentPage - 1)}
+                            >
+                                &laquo; Previous
+                            </button>
+                            <span className="mx-2">Page {currentPage} of {totalPages}</span>
+                            <button
+                                className="btn btn-outline-primary mx-2"
+                                disabled={currentPage === totalPages}
+                                onClick={() => setCurrentPage(currentPage + 1)}
+                            >
+                                Next &raquo;
+                            </button>
+                        </div>
                     </CardBody>
                 </Card> ) : (<p>Loading...</p>)}
 

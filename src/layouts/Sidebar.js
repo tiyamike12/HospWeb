@@ -48,11 +48,11 @@ const navigation = [
         href: "/lab-tests",
         icon: "bi bi-link",
     },
-    {
-        title: "Operation Theatres",
-        href: "/operation-theatres",
-        icon: "bi bi-people",
-    },
+    // {
+    //     title: "Operation Theatres",
+    //     href: "/operation-theatres",
+    //     icon: "bi bi-people",
+    // },
     {
         title: "Departments",
         href: "/departments",

@@ -15,14 +15,14 @@ import {
 } from "reactstrap";
 import {ReactComponent as LogoWhite} from "../assets/images/logos/xtremelogowhite.svg";
 import user1 from "../assets/images/users/user1.jpg";
-import {AuthContext} from "../context/AuthContext";
+//import {AuthContext} from "../context/AuthContext";
 import axios from "axios";
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 const Header = () => {
     const [isOpen, setIsOpen] = React.useState(false);
     const [dropdownOpen, setDropdownOpen] = React.useState(false);
-    const {setToken} = useContext(AuthContext);
+    //const {setToken} = useContext(AuthContext);
     const navigate = useNavigate();
     const toggle = () => setDropdownOpen((prevState) => !prevState);
     const Handletoggle = () => {
@@ -33,7 +33,7 @@ const Header = () => {
     const handleLogout = async () => {
         try {
             await axios.post(`${BASE_URL}/logout`);
-            setToken(null);
+            //setToken(null);
             //localStorage.removeItem('token');
             navigate('/login');
         } catch (error) {

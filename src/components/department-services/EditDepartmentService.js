@@ -1,30 +1,61 @@
 import {useEffect, useState} from 'react';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import axios from 'axios';
 import {Button, Card, CardBody, CardTitle, Col, Form, FormGroup, FormText, Input, Label, Row} from "reactstrap";
 import {toast} from "react-toastify";
 import Alert from "react-s-alert";
 const BASE_URL = process.env.REACT_APP_API_URL;
 
-function NewLabTest() {
+function EditDepartmentService() {
     const [disable, setDisable] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
-    const [labTest, setLabTest] = useState({
-        test_name: '',
+    const [departments, setDepartments] = useState([]);
+    const [departmentService, setDepartmentService] = useState({
+        service_name: '',
         description: '',
-        lab_charges: '',
+        department_id:''
     });
+    const { id } = useParams();
+
+    useEffect(() => {
+
+        axios.get(`${BASE_URL}/department-services/${id}`)
+            .then(response => {
+                const departmentData = response.data;
+                setDepartmentService({
+                    service_name: departmentData.service_name,
+                    description: departmentData.description,
+                    department_id: departmentData.department_id,
+                });
+                console.log(response.data)
+                //setIsLoaded(true);
+            })
+            .catch(error => console.log(error));
+    }, [id]);
+
+    useEffect(() => {
+        axios.get(`${BASE_URL}/departments`)
+            .then(response => setDepartments(response.data))
+            .catch(error => console.log(error));
+    }, []);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setDepartmentService(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
+
     const handleSubmit = async (e) => {
         setIsLoading(true)
         setDisable(true)
         e.preventDefault();
         try {
-            await axios.post(`${BASE_URL}/lab-tests`, labTest)
-                .then(res => toast.success("Lab Test Record created successfully"));
-            navigate('/lab-tests');
-            Alert.success('Lab Test Record added successfully!');
-
+            await axios.patch(`${BASE_URL}/department-services/${id}`, departmentService);
+            Alert.success('Department service updated successfully!');
+            navigate('/department-services');
         } catch (error) {
             if (error.response) {
                 const responseData = error.response.data;
@@ -88,15 +119,6 @@ function NewLabTest() {
         // Handle network error as needed
     };
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setLabTest(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
-    };
-
-
     return (
         <Row>
             <Col>
@@ -106,18 +128,18 @@ function NewLabTest() {
                 <Card>
                     <CardTitle tag="h6" className="border-bottom p-3 mb-0">
                         <i className="bi bi-bell me-2"> </i>
-                        Create a Lab Test Record
+                        Edit Department Service
                     </CardTitle>
                     <CardBody>
                         <Form onSubmit={handleSubmit}>
                             <FormGroup>
-                                <Label for="test_name">Test Name</Label>
+                                <Label for="service_name">Service Name</Label>
                                 <Input
-                                    id="test_name"
-                                    name="test_name"
-                                    placeholder="Test Name"
+                                    id="service_name"
+                                    name="service_name"
+                                    placeholder="Service Name"
                                     type="text"
-                                    value={labTest.test_name}
+                                    value={departmentService.service_name}
                                     onChange={handleChange}
                                 />
                             </FormGroup>
@@ -128,26 +150,31 @@ function NewLabTest() {
                                     name="description"
                                     placeholder=" Description"
                                     type="text"
-                                    value={labTest.description}
+                                    value={departmentService.description}
                                     onChange={handleChange}
                                 />
                             </FormGroup>
 
                             <FormGroup>
-                                <Label for="lab_charges">Lab Charges</Label>
-                                <Input
-                                    id="lab_charges"
-                                    name="lab_charges"
-                                    placeholder="Lab Charges"
-                                    type="number"
-                                    value={labTest.lab_charges}
+                                <Label for="department_id">Select Department</Label>
+                                <select
+                                    id="department_id"
+                                    name="department_id"
+                                    className="form-control"
+                                    value={departmentService.department_id}
                                     onChange={handleChange}
-                                />
+                                >
+                                    <option value="">Please select a value</option>
+                                    {departments.map((record) => (
+                                        <option key={record.id} value={record.id}>
+                                            {record.department_name}
+                                        </option>
+                                    ))}
+                                </select>
                             </FormGroup>
 
-
                             <Button type="submit" className="btn btn-success"  disabled={disable}>
-                                Add Lab Test&emsp;
+                                Update Department Service&emsp;
                                 {isLoading && <span className="spinner-border spinner-border-sm me-1"></span> }
                             </Button>
                         </Form>
@@ -157,8 +184,7 @@ function NewLabTest() {
             <Alert stack={{ limit: 5 }} />
 
         </Row>
-
     );
 }
 
-export default NewLabTest;
+export default EditDepartmentService;

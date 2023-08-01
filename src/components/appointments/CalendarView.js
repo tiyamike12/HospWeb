@@ -21,9 +21,12 @@ const CalendarView = () => {
 
         setStartDate(firstDayOfMonth);
         setEndDate(lastDayOfMonth);
-
-        fetchAppointments(firstDayOfMonth, lastDayOfMonth);
     }, []);
+
+    useEffect(() => {
+        // Fetch appointments when start_date or end_date changes
+        fetchAppointments(start_date, end_date);
+    }, [start_date, end_date]);
 
     const fetchAppointments = (start_date, end_date) => {
         axios
@@ -31,6 +34,7 @@ const CalendarView = () => {
                 params: { start_date, end_date },
             })
             .then((response) => {
+                console.log(response)
                 const formattedEvents = response.data.map((appointment) => ({
                     id: appointment.id,
                     title: appointment.purpose,
@@ -41,7 +45,10 @@ const CalendarView = () => {
                 setIsLoaded(true);
             })
             .catch((error) => console.log(error));
+
     };
+
+    console.log(events)
 
     const handleSearch = () => {
         // Fetch appointments when the user clicks the search button

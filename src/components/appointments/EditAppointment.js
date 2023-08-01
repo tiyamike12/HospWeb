@@ -4,6 +4,7 @@ import axios from 'axios';
 import {Button, Card, CardBody, CardTitle, Col, Form, FormGroup, FormText, Input, Label, Row} from "reactstrap";
 import {toast} from "react-toastify";
 import Alert from "react-s-alert";
+import Select from "react-select";
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 function EditAppointment() {
@@ -12,6 +13,10 @@ function EditAppointment() {
     const navigate = useNavigate();
     const [doctors, setDoctors] = useState([]);
     const [patients, setPatients] = useState([]);
+    const [selectedPatient, setSelectedPatient] = useState(null);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const [appointment, setAppointment] = useState({
         patient_id: '',
         user_id: '',
@@ -37,10 +42,35 @@ function EditAppointment() {
     }, []);
 
     useEffect(() => {
-        axios.get(`${BASE_URL}/patients`)
-            .then(response => setPatients(response.data))
-            .catch(error => console.log(error));
-    }, []);
+        const fetchPatientsByPage = (page) => {
+            setIsLoading(true);
+            axios.get(`${BASE_URL}/patients?page=${page}`)
+                .then(response => {
+                    const formattedPatients = response.data.data.map(patient => ({
+                        value: patient.id,
+                        label: `${patient.firstname} ${patient.surname}`,
+                    }));
+                    setPatients(prevPatients => [...prevPatients, ...formattedPatients]);
+                    setTotalPages(response.data.meta.last_page);
+                    setCurrentPage(page);
+                    setIsLoading(false);
+                })
+                .catch(error => {
+                    console.log(error);
+                    setIsLoading(false);
+                });
+        };
+
+        fetchPatientsByPage(currentPage);
+    }, [currentPage]);
+
+    const handlePatientChange = (selectedOption) => {
+        setSelectedPatient(selectedOption);
+        setAppointment(prevState => ({
+            ...prevState,
+            patient_id: selectedOption ? selectedOption.value : '', // Set the selected patient's ID
+        }));
+    };
 
     useEffect(() => {
         axios.get(`${BASE_URL}/appointments/${id}`)
@@ -169,18 +199,35 @@ function EditAppointment() {
 
                             <FormGroup>
                                 <Label for="patient_id">Select Patient</Label>
-                                <select id="patient_id" name="patient_id"
-                                        className="form-control"
-                                        value={appointment.patient_id}
-                                        onChange={handleChange}>
-                                    <option value="">Please select a value</option>
-                                    {patients.map(patient => (
-                                        <option key={patient.id} value={patient.id}>{patient.firstname}</option>
-                                    ))}
-                                </select>
-                                {/*{user.errors.role_id && <span className="text-danger" style={{ marginTop: 10}}>{user.errors.role_id}</span>}*/}
-
+                                <Select
+                                    id="patient_id"
+                                    name="patient_id"
+                                    options={patients}
+                                    value={selectedPatient}
+                                    onChange={handlePatientChange}
+                                    placeholder="Please select a patient..."
+                                    isSearchable
+                                    isLoading={isLoading}
+                                    onMenuScrollToBottom={() => {
+                                        if (currentPage < totalPages) {
+                                            setCurrentPage(currentPage + 1);
+                                        }
+                                    }}
+                                />
                             </FormGroup>
+                            {/*<FormGroup>*/}
+                            {/*    <Label for="patient_id">Select Patient</Label>*/}
+                            {/*    <select id="patient_id" name="patient_id"*/}
+                            {/*            className="form-control"*/}
+                            {/*            value={appointment.patient_id}*/}
+                            {/*            onChange={handleChange}>*/}
+                            {/*        <option value="">Please select a value</option>*/}
+                            {/*        {patients.map(patient => (*/}
+                            {/*            <option key={patient.id} value={patient.id}>{patient.firstname}</option>*/}
+                            {/*        ))}*/}
+                            {/*    </select>*/}
+
+                            {/*</FormGroup>*/}
                             <FormGroup>
                                 <Label for="appointment_date">Appointment Date</Label>
                                 <Input

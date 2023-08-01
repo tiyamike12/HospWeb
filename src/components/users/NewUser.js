@@ -4,7 +4,6 @@ import axios from 'axios';
 import {Button, Card, CardBody, CardTitle, Col, Form, FormGroup, FormText, Input, Label, Row} from "reactstrap";
 import {ToastContainer, toast} from "react-toastify";
 import Alert from "react-s-alert";
-import validator from 'validator';
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -12,7 +11,9 @@ function CreateUser() {
     const [disable, setDisable] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [roles, setRoles] = useState([]);
-   const navigate = useNavigate();
+    const [departments, setDepartments] = useState([]);
+
+    const navigate = useNavigate();
     const [user, setUser] = useState({
         email: '',
         // password: '',
@@ -23,12 +24,16 @@ function CreateUser() {
         date_of_birth: '',
         gender: '',
         physical_address:'',
-        job_title:''
+        job_title:'',
+        department_id:''
     });
     //const [errors, setErrors] = useState({});
     useEffect(() => {
         axios.get(`${BASE_URL}/roles`)
             .then(response => setRoles(response.data))
+            .catch(error => console.log(error));
+        axios.get(`${BASE_URL}/departments`)
+            .then(response => setDepartments(response.data))
             .catch(error => console.log(error));
     }, []);
 
@@ -241,6 +246,24 @@ function CreateUser() {
                                     value={user.job_title}
                                     onChange={handleChange}
                                 />
+                            </FormGroup>
+
+                            <FormGroup>
+                                <Label for="department_id">Select Department</Label>
+                                <select
+                                    id="department_id"
+                                    name="department_id"
+                                    className="form-control"
+                                    value={user.department_id}
+                                    onChange={handleChange}
+                                >
+                                    <option value="">Please select a value</option>
+                                    {departments.map((record) => (
+                                        <option key={record.id} value={record.id}>
+                                            {record.department_name}
+                                        </option>
+                                    ))}
+                                </select>
                             </FormGroup>
 
                             <Button type="submit" className="btn btn-success"  disabled={disable}>

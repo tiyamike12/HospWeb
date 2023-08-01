@@ -1,5 +1,5 @@
 import {lazy} from "react";
-import {Navigate} from "react-router-dom";
+import {Navigate, Route, Routes, useRoutes} from "react-router-dom";
 import AuthContextProvider from "../context/AuthContext";
 import PrivateRoute from "../context/PrivateRoute";
 
@@ -60,6 +60,9 @@ const CalendarView = lazy(() => import("../components/appointments/CalendarView"
 const Availability = lazy(() => import("../components/doctor/Availability"));
 const SetAvailability = lazy(() => import("../components/doctor/SetAvailability"));
 const AvailableDoctors = lazy(() => import("../components/doctor/AvailableDoctors"));
+const NewDepartmentService = lazy(() => import("../components/department-services/NewDepartmentService"));
+const DepartmentServiceList = lazy(() => import("../components/department-services/DepartmentServiceList"));
+const EditDepartmentService = lazy(() => import("../components/department-services/EditDepartmentService"));
 
 /*****Routes******/
 
@@ -123,6 +126,9 @@ const ThemeRoutes = [
             {path: "/availability", exact: true, element: <Availability/>},
             {path: "/edit-availability/:id", exact: true, element: <SetAvailability/>},
             {path: "/available-doctors", exact: true, element: <AvailableDoctors/>},
+            {path: "/new-department-service", exact: true, element: <NewDepartmentService/>},
+            {path: "/department-services", exact: true, element: <DepartmentServiceList/>},
+            {path: "/edit-department-service/:id", exact: true, element: <EditDepartmentService/>},
 
         ],
     },

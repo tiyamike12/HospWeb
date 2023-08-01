@@ -11,19 +11,26 @@ const BASE_URL = process.env.REACT_APP_API_URL;
 const AppointmentList = () => {
     const [listData, setListData] = useState([]);
     const [isLoaded, setIsLoaded] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
     const [selectedItemId, setSelectedItemId] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
-        axios.get(  `${BASE_URL}/appointments`)
+        fetchAppointments(currentPage);
+    }, [currentPage]);
+
+    const fetchAppointments = (page) => {
+        axios.get(`${BASE_URL}/appointments?page=${page}`)
             .then(response => {
-                setListData(response.data);
+                setListData(response.data.data);
+                setTotalPages(response.data.meta.last_page);
                 setIsLoaded(true);
             })
             .catch(error => console.log(error));
-    }, []);
+    };
 
     const handleDelete = () => {
         axios.delete(`${BASE_URL}/appointments/${selectedItemId}`)
@@ -53,12 +60,21 @@ const AppointmentList = () => {
         );
     });
 
+
+    const handlePreviousPage = () => {
+        setCurrentPage(currentPage - 1);
+    };
+
+    const handleNextPage = () => {
+        setCurrentPage(currentPage + 1);
+    };
+
     console.log(listData)
 
     return (
         <div>
             <Row className="mb-3">
-                <Col xs="4" >
+                <Col xs="4">
                     <Input
                         type="text"
                         placeholder="Search patients..."
@@ -75,12 +91,18 @@ const AppointmentList = () => {
 
                     <CardBody>
                         <CardTitle tag="h5">Appointments Listing</CardTitle>
-                        <div className="d-flex justify-content-end">
-                            <Link to={'/appointments-calendar'} className="btn btn-primary">Appointments Calendar</Link>
-                        </div>
-                        <div className="d-flex justify-content-end">
-                            <Link to={'/new-appointment'} className="btn btn-primary">Add New Appointment Record</Link>
-                        </div>
+                        <Row className="mb-3">
+                            <Col xs="12">
+                                <div className="d-flex justify-content-between">
+                                    <div>
+                                        <Link to={'/appointments-calendar'} className="btn btn-primary">Appointments Calendar</Link>
+                                    </div>
+                                    <div>
+                                        <Link to={'/new-appointment'} className="btn btn-primary">Add New Appointment Record</Link>
+                                    </div>
+                                </div>
+                            </Col>
+                        </Row>
                         <CardSubtitle className="mb-2 text-muted" tag="h6">
                             Appointments
                         </CardSubtitle>
@@ -109,19 +131,40 @@ const AppointmentList = () => {
 
                                     <td>{tdata.purpose}</td>
                                     <td>{tdata.status}</td>
-                                    <td><Link to={`/edit-appointment/${tdata.id}`} className="btn btn-outline-primary">Edit</Link></td>
-                                    <td><button className="btn btn-danger" onClick={() => {
-                                        setSelectedItemId(tdata.id);
-                                        setShowModal(true);}}>
-                                        Delete
-                                    </button></td>
+                                    <td><Link to={`/edit-appointment/${tdata.id}`}
+                                              className="btn btn-outline-primary">Edit</Link></td>
+                                    <td>
+                                        <button className="btn btn-danger" onClick={() => {
+                                            setSelectedItemId(tdata.id);
+                                            setShowModal(true);
+                                        }}>
+                                            Delete
+                                        </button>
+                                    </td>
 
                                 </tr>
                             ))}
                             </tbody>
                         </Table>
+                        <div className="d-flex justify-content-center">
+                            <button
+                                className="btn btn-outline-primary mx-2"
+                                disabled={currentPage === 1}
+                                onClick={handlePreviousPage}
+                            >
+                                &laquo; Previous
+                            </button>
+                            <span className="mx-2">Page {currentPage} of {totalPages}</span>
+                            <button
+                                className="btn btn-outline-primary mx-2"
+                                disabled={currentPage === totalPages}
+                                onClick={handleNextPage}
+                            >
+                                Next &raquo;
+                            </button>
+                        </div>
                     </CardBody>
-                </Card> ) : (<p>Loading...</p>)}
+                </Card>) : (<p>Loading...</p>)}
 
             <Modal show={showModal}>
                 <Modal.Header closeButton>
@@ -129,7 +172,7 @@ const AppointmentList = () => {
                 </Modal.Header>
                 <Modal.Body>Are you sure you want to remove this appointment?</Modal.Body>
                 <Modal.Footer>
-                    <Button  className="btn btn-outline-light" onClick={() => setShowModal(false)}>
+                    <Button className="btn btn-outline-light" onClick={() => setShowModal(false)}>
                         Close
                     </Button>
                     <Button variant="primary" className="btn btn-danger" role="button" onClick={handleDelete}>
@@ -137,7 +180,7 @@ const AppointmentList = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
-            <Alert stack={{ limit: 5 }} />
+            <Alert stack={{limit: 5}}/>
 
         </div>
     )

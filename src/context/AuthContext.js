@@ -1,6 +1,8 @@
-import React, {createContext, useEffect, useState} from "react";
+import React, {createContext, useContext, useEffect, useState} from 'react';
+import Cookies from 'js-cookie';
 import axios from "axios";
 import CryptoJS from 'crypto-js';
+
 export const AuthContext = createContext();
 
 const AuthContextProvider = ({ children }) => {

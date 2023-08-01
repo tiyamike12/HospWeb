@@ -6,24 +6,32 @@ import {toast} from "react-toastify";
 import Alert from "react-s-alert";
 const BASE_URL = process.env.REACT_APP_API_URL;
 
-function NewLabTest() {
+function NewDepartmentService() {
     const [disable, setDisable] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
-    const [labTest, setLabTest] = useState({
-        test_name: '',
+    const [departments, setDepartments] = useState([]);
+
+    const [departmentService, setDepartmentService] = useState({
+        service_name: '',
         description: '',
-        lab_charges: '',
+        department_id:''
     });
+
+    useEffect(() => {
+        axios.get(`${BASE_URL}/departments`)
+            .then(response => setDepartments(response.data))
+            .catch(error => console.log(error));
+    }, []);
     const handleSubmit = async (e) => {
         setIsLoading(true)
         setDisable(true)
         e.preventDefault();
         try {
-            await axios.post(`${BASE_URL}/lab-tests`, labTest)
-                .then(res => toast.success("Lab Test Record created successfully"));
-            navigate('/lab-tests');
-            Alert.success('Lab Test Record added successfully!');
+            await axios.post(`${BASE_URL}/department-services`, departmentService)
+                .then(res => toast.success("Department Service Record created successfully"));
+            navigate('/department-services');
+            Alert.success('Department Record added successfully!');
 
         } catch (error) {
             if (error.response) {
@@ -90,7 +98,7 @@ function NewLabTest() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setLabTest(prevState => ({
+        setDepartmentService(prevState => ({
             ...prevState,
             [name]: value
         }));
@@ -106,18 +114,18 @@ function NewLabTest() {
                 <Card>
                     <CardTitle tag="h6" className="border-bottom p-3 mb-0">
                         <i className="bi bi-bell me-2"> </i>
-                        Create a Lab Test Record
+                        Create a Department Service
                     </CardTitle>
                     <CardBody>
                         <Form onSubmit={handleSubmit}>
                             <FormGroup>
-                                <Label for="test_name">Test Name</Label>
+                                <Label for="service_name">Service Name</Label>
                                 <Input
-                                    id="test_name"
-                                    name="test_name"
-                                    placeholder="Test Name"
+                                    id="service_name"
+                                    name="service_name"
+                                    placeholder="Service Name"
                                     type="text"
-                                    value={labTest.test_name}
+                                    value={departmentService.service_name}
                                     onChange={handleChange}
                                 />
                             </FormGroup>
@@ -128,26 +136,31 @@ function NewLabTest() {
                                     name="description"
                                     placeholder=" Description"
                                     type="text"
-                                    value={labTest.description}
+                                    value={departmentService.description}
                                     onChange={handleChange}
                                 />
                             </FormGroup>
 
                             <FormGroup>
-                                <Label for="lab_charges">Lab Charges</Label>
-                                <Input
-                                    id="lab_charges"
-                                    name="lab_charges"
-                                    placeholder="Lab Charges"
-                                    type="number"
-                                    value={labTest.lab_charges}
+                                <Label for="department_id">Select Department</Label>
+                                <select
+                                    id="department_id"
+                                    name="department_id"
+                                    className="form-control"
+                                    value={departmentService.department_id}
                                     onChange={handleChange}
-                                />
+                                >
+                                    <option value="">Please select a value</option>
+                                    {departments.map((record) => (
+                                        <option key={record.id} value={record.id}>
+                                            {record.department_name}
+                                        </option>
+                                    ))}
+                                </select>
                             </FormGroup>
 
-
                             <Button type="submit" className="btn btn-success"  disabled={disable}>
-                                Add Lab Test&emsp;
+                                Add Department&emsp;
                                 {isLoading && <span className="spinner-border spinner-border-sm me-1"></span> }
                             </Button>
                         </Form>
@@ -161,4 +174,4 @@ function NewLabTest() {
     );
 }
 
-export default NewLabTest;
+export default NewDepartmentService;

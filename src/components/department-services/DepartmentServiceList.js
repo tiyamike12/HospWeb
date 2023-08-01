@@ -1,4 +1,4 @@
-import {Button, Card, CardBody, CardSubtitle, CardTitle, Col, Row, Table} from "reactstrap";
+import {Button, Card, CardBody, CardSubtitle, CardTitle, Table} from "reactstrap";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {Link, useNavigate} from "react-router-dom";
@@ -8,7 +8,7 @@ import Alert from 'react-s-alert';
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
-const DepartmentList = () => {
+const DepartmentServiceList = () => {
     const [listData, setListData] = useState([]);
     const [isLoaded, setIsLoaded] = useState(false);
     const navigate = useNavigate();
@@ -16,7 +16,7 @@ const DepartmentList = () => {
     const [selectedItemId, setSelectedItemId] = useState(null);
 
     useEffect(() => {
-        axios.get(`${BASE_URL}/departments`)
+        axios.get(  `${BASE_URL}/department-services`)
             .then(response => {
                 setListData(response.data);
                 setIsLoaded(true);
@@ -25,14 +25,14 @@ const DepartmentList = () => {
     }, []);
 
     const handleDelete = () => {
-        axios.delete(`${BASE_URL}/departments/${selectedItemId}`)
+        axios.delete(`${BASE_URL}/department-services/${selectedItemId}`)
             .then(response => {
                 setListData(listData.filter(item => item.id !== selectedItemId));
                 setSelectedItemId(null);
                 setShowModal(false);
-                toast.success('Department removed successfully')
+                toast.success('Department service removed successfully')
                 //NotificationManager.success('User removed successfully');
-                Alert.success('Department removed successfully!');
+                Alert.success('Department service removed successfully!');
 
             })
             .catch(error => console.log(error));
@@ -47,31 +47,21 @@ const DepartmentList = () => {
 
 
                     <CardBody>
-                        <CardTitle tag="h5">Departments</CardTitle>
-                        <Row className="mb-3">
-                            <Col xs="12">
-                                <div className="d-flex justify-content-between">
-                                    <div>
-                                        <Link to={'/new-department'} className="btn btn-primary">Add New
-                                            Department</Link>
-                                    </div>
-                                    <div>
-                                        <Link to={'/department-services'} className="btn btn-primary">Department
-                                            Services</Link>
-                                    </div>
-                                </div>
-                            </Col>
-                        </Row>
+                        <CardTitle tag="h5">Department Services</CardTitle>
+                        <div className="d-flex justify-content-end">
+                            <Link to={'/new-department-service'} className="btn btn-primary">Add New Department Service</Link>
+                        </div>
+
                         <CardSubtitle className="mb-2 text-muted" tag="h6">
-                            Departments
+                            Departments Service
                         </CardSubtitle>
 
                         <Table className="no-wrap mt-3 align-middle" responsive borderless>
                             <thead>
                             <tr>
-                                <th>Department Name</th>
+                                <th>Service Name</th>
                                 <th>Description</th>
-
+                                <th>Department</th>
                                 <th>Edit</th>
                                 <th>Delete</th>
 
@@ -81,33 +71,31 @@ const DepartmentList = () => {
                             {listData.map((data) => (
                                 <tr key={data.id} className="border-top">
 
-                                    <td>{data.department_name}</td>
+                                    <td>{data.service_name}</td>
                                     <td>{data.description}</td>
-                                    <td><Link to={`/edit-department/${data.id}`}
-                                              className="btn btn-outline-primary">Edit</Link></td>
-                                    <td>
-                                        <button className="btn btn-danger" onClick={() => {
-                                            setSelectedItemId(data.id);
-                                            setShowModal(true);
-                                        }}>
-                                            Delete
-                                        </button>
-                                    </td>
+                                    <td>{data.department.department_name}</td>
+
+                                    <td><Link to={`/edit-department-service/${data.id}`} className="btn btn-outline-primary">Edit</Link></td>
+                                    <td><button className="btn btn-danger" onClick={() => {
+                                        setSelectedItemId(data.id);
+                                        setShowModal(true);}}>
+                                        Delete
+                                    </button></td>
 
                                 </tr>
                             ))}
                             </tbody>
                         </Table>
                     </CardBody>
-                </Card>) : (<p>Loading...</p>)}
+                </Card> ) : (<p>Loading...</p>)}
 
             <Modal show={showModal}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Remove Department</Modal.Title>
+                    <Modal.Title>Remove service</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>Are you sure you want to remove this department?</Modal.Body>
+                <Modal.Body>Are you sure you want to remove this service?</Modal.Body>
                 <Modal.Footer>
-                    <Button className="btn btn-outline-light" onClick={() => setShowModal(false)}>
+                    <Button  className="btn btn-outline-light" onClick={() => setShowModal(false)}>
                         Close
                     </Button>
                     <Button variant="primary" className="btn btn-danger" role="button" onClick={handleDelete}>
@@ -115,10 +103,10 @@ const DepartmentList = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
-            <Alert stack={{limit: 5}}/>
+            <Alert stack={{ limit: 5 }} />
 
         </div>
     )
 }
 
-export default DepartmentList;
+export default DepartmentServiceList;

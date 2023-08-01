@@ -12,6 +12,8 @@ function EditUser() {
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const [roles, setRoles] = useState([]);
+    const [departments, setDepartments] = useState([]);
+
     const [user, setUser] = useState({
         email: '',
         password: '',
@@ -22,7 +24,8 @@ function EditUser() {
         date_of_birth: '',
         gender: '',
         physical_address:'',
-        job_title:''
+        job_title:'',
+        department_id:''
     });
 
     const { id } = useParams();
@@ -41,7 +44,9 @@ function EditUser() {
                     email: userData.person.email,
                     phone: userData.person.phone,
                     job_title: userData.person.job_title,
-                    role_id: userData.role_id
+                    role_id: userData.role_id,
+                    department_id: userData.department_id
+
                 });
                 console.log(response.data)
                 //setIsLoaded(true);
@@ -52,6 +57,9 @@ function EditUser() {
     useEffect(() => {
         axios.get(`${BASE_URL}/roles`)
             .then(response => setRoles(response.data))
+            .catch(error => console.log(error));
+        axios.get(`${BASE_URL}/departments`)
+            .then(response => setDepartments(response.data))
             .catch(error => console.log(error));
     }, []);
 
@@ -260,6 +268,24 @@ function EditUser() {
                                     value={user.job_title}
                                     onChange={handleChange}
                                 />
+                            </FormGroup>
+
+                            <FormGroup>
+                                <Label for="department_id">Select Department</Label>
+                                <select
+                                    id="department_id"
+                                    name="department_id"
+                                    className="form-control"
+                                    value={user.department_id}
+                                    onChange={handleChange}
+                                >
+                                    <option value="">Please select a value</option>
+                                    {departments.map((record) => (
+                                        <option key={record.id} value={record.id}>
+                                            {record.department_name}
+                                        </option>
+                                    ))}
+                                </select>
                             </FormGroup>
 
                             <Button type="submit" className="btn btn-success" disabled={disable}>
