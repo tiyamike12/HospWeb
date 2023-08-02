@@ -1,22 +1,28 @@
 import {Button, Nav, NavItem} from "reactstrap";
 import Logo from "./Logo";
 import {Link, useLocation} from "react-router-dom";
+import useAuth from "../context/useAuth";
 
 const navigation = [
     {
         title: "Dashboard",
         href: "/starter",
         icon: "bi bi-speedometer2",
+        showForRoles: ["system_administrator"]
     },
     {
         title: "Patients",
         href: "/patients",
         icon: "bi bi-bell",
+        showForRoles: ["system_administrator", "doctor"]
+
     },
     {
         title: "Availability",
         href: "/availability",
         icon: "bi bi-patch-check",
+        showForRoles: ["system_administrator", "doctor", "nurse"]
+
     },
     // {
     //     title: "Inventory",
@@ -27,26 +33,36 @@ const navigation = [
         title: "Appointments",
         href: "/appointments",
         icon: "bi bi-card-text",
+        showForRoles: ["system_administrator", "doctor", "nurse"]
+
     },
     {
         title: "Medical Records",
         href: "/medical-records",
         icon: "bi bi-columns",
+        showForRoles: ["system_administrator", "doctor", "nurse"]
+
     },
     {
         title: "Billings",
         href: "/billings",
         icon: "bi bi-layout-split",
+        showForRoles: ["system_administrator", "finance_manager"]
+
     },
     {
         title: "Pharmacy Items",
         href: "/pharmacy-items",
         icon: "bi bi-textarea-resize",
+        showForRoles: ["system_administrator", "pharmacist"]
+
     },
     {
         title: "Lab Tests",
         href: "/lab-tests",
         icon: "bi bi-link",
+        showForRoles: ["system_administrator", "nurse"]
+
     },
     // {
     //     title: "Operation Theatres",
@@ -57,20 +73,40 @@ const navigation = [
         title: "Departments",
         href: "/departments",
         icon: "bi bi-people",
+        showForRoles: ["system_administrator"]
+
     },
+
     {
         title: "Insurance Providers",
         href: "/insurance-providers",
         icon: "bi bi-people",
+        showForRoles: ["system_administrator", "finance_manager"]
+
     },
     {
         title: "Users",
         href: "/users",
         icon: "bi bi-people",
+        showForRoles: ["system_administrator"]
+    },
+    {
+        title: "Activity Logs",
+        href: "/activity-logs",
+        icon: "bi bi-people",
+        showForRoles: ["system_administrator"]
     },
 ];
 
 const Sidebar = () => {
+    const { user } = useAuth();
+
+    const roleName = user?.role?.name;
+
+    const filteredNavigation = navigation.filter(
+        (navi) => !navi.showForRoles || navi.showForRoles.includes(roleName)
+    );
+
     const showMobilemenu = () => {
         document.getElementById("sidebarArea").classList.toggle("showSidebar");
     };
@@ -89,7 +125,7 @@ const Sidebar = () => {
             </div>
             <div className="pt-4 mt-2">
                 <Nav vertical className="sidebarNav">
-                    {navigation.map((navi, index) => (
+                    {filteredNavigation.map((navi, index) => (
                         <NavItem key={index} className="sidenav-bg">
                             <Link
                                 to={navi.href}

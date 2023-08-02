@@ -14,15 +14,21 @@ import {
     Button,
 } from "reactstrap";
 import {ReactComponent as LogoWhite} from "../assets/images/logos/xtremelogowhite.svg";
-import user1 from "../assets/images/users/user1.jpg";
+import user1 from "../assets/images/users/usersp.png";
 //import {AuthContext} from "../context/AuthContext";
 import axios from "axios";
+import useAuth from "../context/useAuth";
+
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 const Header = () => {
     const [isOpen, setIsOpen] = React.useState(false);
     const [dropdownOpen, setDropdownOpen] = React.useState(false);
     //const {setToken} = useContext(AuthContext);
+    const { user } = useAuth();
+    const roleName = user?.role?.name;
+    const username = user?.username;
+
     const navigate = useNavigate();
     const toggle = () => setDropdownOpen((prevState) => !prevState);
     const Handletoggle = () => {
@@ -42,6 +48,7 @@ const Header = () => {
         }
     };
 
+    console.log('User :', roleName);
 
     const showMobilemenu = () => {
         document.getElementById("sidebarArea").classList.toggle("showSidebar");
@@ -79,28 +86,25 @@ const Header = () => {
                 <Nav className="me-auto" navbar>
                     <NavItem>
                         <Link to="/starter" className="nav-link">
-                            Starter
+                            Home
                         </Link>
                     </NavItem>
-                    <NavItem>
-                        <Link to="/about" className="nav-link">
-                            About
-                        </Link>
-                    </NavItem>
+
                     <UncontrolledDropdown inNavbar nav>
                         <DropdownToggle caret nav>
-                            DD Menu
+                            Reports
                         </DropdownToggle>
                         <DropdownMenu end>
-                            <DropdownItem>Option 1</DropdownItem>
-                            <DropdownItem>Option 2</DropdownItem>
+                            <DropdownItem><Link to="/overdue-claims" style={{ textDecoration: 'none', color: 'black' }}>Overdue Claims</Link></DropdownItem>
+                            <DropdownItem><Link to="/bills-outstanding" style={{ textDecoration: 'none', color: 'black' }}>Patient Bills</Link></DropdownItem>
                             <DropdownItem divider/>
                             <DropdownItem>Reset</DropdownItem>
                         </DropdownMenu>
                     </UncontrolledDropdown>
                 </Nav>
                 <Dropdown isOpen={dropdownOpen} toggle={toggle}>
-                    <DropdownToggle color="primary">
+                    {username}
+                    <DropdownToggle color="none">
                         <img
                             src={user1}
                             alt="profile"
@@ -113,7 +117,7 @@ const Header = () => {
                         <DropdownItem>My Account</DropdownItem>
                         <DropdownItem>Edit Profile</DropdownItem>
                         <DropdownItem divider/>
-                        <DropdownItem><Link to="/change-password">Change Password</Link></DropdownItem>
+                        <DropdownItem><Link to="/change-password" style={{ textDecoration: 'none', color: 'black' }}>Change Password</Link></DropdownItem>
                         <DropdownItem onClick={() => handleLogout()}>Logout</DropdownItem>
                     </DropdownMenu>
                 </Dropdown>

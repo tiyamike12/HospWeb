@@ -28,7 +28,6 @@ function EditAppointment() {
 
     const [statusOptions] = useState([
         'scheduled',
-        'in progress',
         'completed',
         'canceled',
     ]);

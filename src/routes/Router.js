@@ -63,6 +63,9 @@ const AvailableDoctors = lazy(() => import("../components/doctor/AvailableDoctor
 const NewDepartmentService = lazy(() => import("../components/department-services/NewDepartmentService"));
 const DepartmentServiceList = lazy(() => import("../components/department-services/DepartmentServiceList"));
 const EditDepartmentService = lazy(() => import("../components/department-services/EditDepartmentService"));
+const ActivityLogList = lazy(() => import("../components/activity-logs/ActivityLogList"));
+const LongPendingClaimsList = lazy(() => import("../components/reports/LongPendingClaimsList"));
+const PatientBill = lazy(() => import("../components/reports/PatientBill"));
 
 /*****Routes******/
 
@@ -129,6 +132,9 @@ const ThemeRoutes = [
             {path: "/new-department-service", exact: true, element: <NewDepartmentService/>},
             {path: "/department-services", exact: true, element: <DepartmentServiceList/>},
             {path: "/edit-department-service/:id", exact: true, element: <EditDepartmentService/>},
+            {path: "/activity-logs", exact: true, element: <ActivityLogList/>},
+            {path: "/overdue-claims", exact: true, element: <LongPendingClaimsList/>},
+            {path: "/bills-outstanding", exact: true, element: <PatientBill/>},
 
         ],
     },

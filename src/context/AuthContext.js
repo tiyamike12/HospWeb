@@ -9,40 +9,50 @@ const AuthContextProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const [token, setToken] = useState(null);
-    // const [token, setToken] = useState(() => {
-    //     // Try to get the token from local storage
-    //     const storedToken = localStorage.getItem('token');
-    //
-    //     // If the token is found in local storage, return it as the initial value
-    //     if (storedToken) {
-    //
-    //         const bytes = CryptoJS.AES.decrypt(storedToken, 'my-secret-key');
-    //         const decryptedToken = bytes.toString(CryptoJS.enc.Utf8);
-    //         return decryptedToken;
-    //     }
-    //
-    //     // Otherwise, return null as the initial value
-    //     return null;
-    // });
+    const [user, setUser] = useState(null);
+
 
     useEffect(() => {
-        // Whenever the token changes, update it in local storage
-        const encryptedToken = CryptoJS.AES.encrypt(token, 'my-secret-key').toString();
-        localStorage.setItem('token', encryptedToken);
-    }, [token]);
+        // When the component mounts, check if the user is already authenticated by looking for the token in the cookie
+        const storedToken = Cookies.get('token');
+        const storedUser = Cookies.get('user'); // Get the user role from cookie
 
-    useEffect(() => {
-        // Add an interceptor to add the Authorization header to each API request
-        axios.interceptors.request.use(config => {
-            const bytes = CryptoJS.AES.decrypt(localStorage.getItem('token'), 'my-secret-key');
-            const token = bytes.toString(CryptoJS.enc.Utf8);
-            if (token) {
-                config.headers.Authorization = `Bearer ${token}`;
-            }
-            return config;
-        });
+        if (storedToken && storedUser) {
+            setIsLoggedIn(true);
+            setToken(storedToken);
+            setUser(storedUser); // Set the user role
+        }
     }, []);
 
+    useEffect(() => {
+        // Whenever the token or user role changes, update them in the cookies
+        if (token) {
+            Cookies.set('token', token, { expires: 7 }); // Cookie expires after 7 days
+        }
+        if (user) {
+            Cookies.set('user', user, { expires: 7 }); // Cookie expires after 7 days
+        }
+    }, [token, user]);
+
+    useEffect(() => {
+        // Add request interceptor to set the token in request headers
+        const requestInterceptor = axios.interceptors.request.use(
+            (config) => {
+                if (token) {
+                    config.headers.Authorization = `Bearer ${token}`;
+                }
+                return config;
+            },
+            (error) => {
+                return Promise.reject(error);
+            }
+        );
+
+        // Clean up the interceptor on component unmount
+        return () => {
+            axios.interceptors.request.eject(requestInterceptor);
+        };
+    }, [token]);
     // const login = () => {
     //     setIsLoggedIn(true);
     // };
@@ -52,7 +62,7 @@ const AuthContextProvider = ({ children }) => {
     // };
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, token, setToken }}>
+        <AuthContext.Provider value={{ isLoggedIn, token, setToken, user, setUser }}>
             {children}
         </AuthContext.Provider>
     );

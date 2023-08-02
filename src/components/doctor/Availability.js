@@ -5,6 +5,7 @@ import {Link, useNavigate} from "react-router-dom";
 import {Modal} from "react-bootstrap";
 import {toast} from "react-toastify";
 import Alert from 'react-s-alert';
+import useAuth from "../../context/useAuth";
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -19,9 +20,12 @@ const Availability = () => {
         start_time: '',
         end_time: ''
     });
+    const { user } = useAuth();
+
+    const userId = user?.id;
 
     useEffect(() => {
-        axios.get(  `${BASE_URL}/doctor/availability/${3}`, )
+        axios.get(  `${BASE_URL}/doctor/availability/${userId}`, )
             .then(response => {
                 setListData(response.data);
                 setIsLoaded(true);
@@ -63,7 +67,7 @@ const Availability = () => {
                                 <td>{listData.end_time}</td>
                                 <td>
                                     <Link
-                                        to={`/edit-availability/${3}`}
+                                        to={`/edit-availability/${userId}`}
                                         className="btn btn-outline-primary"
                                     >
                                         Edit

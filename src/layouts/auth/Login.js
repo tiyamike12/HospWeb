@@ -1,7 +1,7 @@
 import React, {useContext, useState} from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../../context/useAuth";
-import LogoWhite from "../../assets/images/logos/laravel.png";
+import LogoWhite from "../../assets/images/logos/medical-logo.png";
 import "./Login.css";
 import axios from "axios";
 import {AuthContext} from "../../context/AuthContext";
@@ -19,7 +19,7 @@ const Login = () => {
     const { login } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
-    const { setToken } = useContext(AuthContext);
+    const { setToken, setUser } = useContext(AuthContext);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -35,7 +35,7 @@ const Login = () => {
             console.log(response.data)
 
             if (response.data.token !== undefined) {
-                const token  = response.data.token;
+                const { token, user } = response.data;
 
                 console.log("TOKEN IS AVAILABLE")
                 //localStorage.setItem('token', token);
@@ -43,7 +43,8 @@ const Login = () => {
                 toast.success("Login successful!")
                 navigate("/starter");
                 setToken(token);
-                localStorage.setItem('token', token);
+                setUser(user);
+                // localStorage.setItem('token', token);
 
                 //login();
                 //console.log(response.data)
