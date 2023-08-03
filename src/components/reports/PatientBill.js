@@ -15,60 +15,6 @@ const PatientBill = () => {
     const [isLoaded, setIsLoaded] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const navigate = useNavigate();
-    const [showModal, setShowModal] = useState(false);
-    const [selectedItemId, setSelectedItemId] = useState(null);
-    const [insuranceProviderOptions, setInsuranceProviderOptions] = useState([]);
-    const [patients, setPatients] = useState([]);
-    const [selectedPatient, setSelectedPatient] = useState(null);
-    const [selectedInsuranceProvider, setSelectedInsuranceProvider] = useState("");
-    const [isPatientSelectOpen, setIsPatientSelectOpen] = useState(false); // State to track whether the patient select menu is open
-    const [patientOptions, setPatientOptions] = useState({
-        currentPage: 1,
-        data: [],
-        totalPages: 1,
-    });
-    const [isLoadingMorePatients, setIsLoadingMorePatients] = useState(false);
-    const [selectedButton, setSelectedButton] = useState(null);
-
-    useEffect(() => {
-        // Fetch patient and insurance provider options when the component mounts
-        fetchInsuranceProviderOptions();
-    }, []);
-
-    const fetchPatientsByPage = (page) => {
-        setIsLoadingMorePatients(true);
-        axios.get(`${BASE_URL}/patients?page=${page}`)
-            .then(response => {
-                const formattedPatients = response.data.data.map(patient => ({
-                    value: patient.id,
-                    label: `${patient.firstname} ${patient.surname}`,
-                }));
-                setPatients(prevPatients => [...prevPatients, ...formattedPatients]);
-                setTotalPages(response.data.meta.last_page);
-                setCurrentPage(page);
-                setIsLoadingMorePatients(false);
-            })
-            .catch(error => {
-                console.log(error);
-                setIsLoadingMorePatients(false);
-            });
-    };
-
-    useEffect(() => {
-        fetchPatientsByPage(currentPage); // Fetch patients whenever the currentPage changes
-    }, [currentPage]);
-
-
-    const fetchInsuranceProviderOptions = () => {
-        axios.get(`${BASE_URL}/insurance-providers`)
-            .then(response => {
-                setInsuranceProviderOptions(response.data);
-            })
-            .catch(error => console.log(error));
-    };
-
-
 
     const csvHeaders = [
         { label: "Patient", key: "patientName" },
@@ -93,9 +39,6 @@ const PatientBill = () => {
             .catch(error => console.log(error));
     };
 
-    const handlePatientChange = (selectedOption) => {
-        setSelectedPatient(selectedOption);
-    };
 
     const csvData = listData.map((tdata) => {
         return {
@@ -120,44 +63,6 @@ const PatientBill = () => {
     };
 
 
-    const fetchData = () => {
-        if (selectedButton === 'patient') {
-            if (selectedPatient) {
-                console.log("Patient was selected for reporting")
-                // axios.get(`${BASE_URL}/billings/patient/${selectedPatient.value}`)
-                //     .then(response => {
-                //         // Handle the response for patient billing data
-                //         // For example, set the listData state with the response data
-                //         setListData(response.data);
-                //     })
-                //     .catch(error => {
-                //         console.log(error);
-                //     });
-            } else {
-                // Handle the case when no patient is selected
-                // For example, show an error message or notification
-                console.log('Please select a patient.');
-            }
-        } else if (selectedButton === 'provider') {
-            if (selectedInsuranceProvider) {
-                console.log("Provider was selected for reporting")
-
-                // axios.get(`${BASE_URL}/billings/provider/${selectedInsuranceProvider.value}`)
-                //     .then(response => {
-                //         // Handle the response for insurance provider billing data
-                //         // For example, set the listData state with the response data
-                //         setListData(response.data);
-                //     })
-                //     .catch(error => {
-                //         console.log(error);
-                //     });
-            } else {
-                // Handle the case when no insurance provider is selected
-                // For example, show an error message or notification
-                console.log('Please select an insurance provider.');
-            }
-        }
-    }
     console.log(listData)
     return (
         <div>
@@ -165,57 +70,10 @@ const PatientBill = () => {
                 <Card>
                     <CardBody>
                         <CardTitle tag="h5">Outstanding Bills</CardTitle>
-                            <Row className="align-items-end">
-                                {/* Patient Select */}
-                                <Col md="4">
-                                    <FormGroup>
-                                        <Label for="patient_id">Select Patient</Label>
-                                        <Select
-                                            id="patient_id"
-                                            name="patient_id"
-                                            options={patients}
-                                            value={selectedPatient}
-                                            onChange={handlePatientChange}
-                                            placeholder="Please select a patient..."
-                                            isSearchable
-                                            isLoading={isLoadingMorePatients}
-                                            onMenuScrollToBottom={() => {
-                                                if (!isLoadingMorePatients && currentPage < totalPages) {
-                                                    fetchPatientsByPage(currentPage + 1);
-                                                }
-                                            }}
-                                        />
-                                    </FormGroup>
-                                    <Button color="primary" onClick={() => setSelectedButton('patient')} className="mb-2">
-                                        Fetch Patient Data
-                                    </Button>
-                                </Col>
 
-                                {/* Insurance Provider Select */}
-                                <Col md="4">
-                                    <FormGroup>
-                                        <label htmlFor="insuranceProviderSelect">Select Insurance Provider:</label>
-                                        <Select
-                                            id="insuranceProviderSelect"
-                                            name="insurance_provider_id"
-                                            value={selectedInsuranceProvider}
-                                            options={insuranceProviderOptions.map(provider => ({
-                                                value: provider.id,
-                                                label: provider.provider_name
-                                            }))}
-                                            onChange={(selectedOption) => setSelectedInsuranceProvider(selectedOption)}
-                                            isClearable
-                                            isSearchable
-                                        />
-                                    </FormGroup>
-                                    <Button color="primary" onClick={() => setSelectedButton('provider')} className="mb-2">
-                                        Fetch Insurance Provider Data
-                                    </Button>
-                                </Col>
-
-
-                            </Row>
-                        <Button color="success" className="ms-2 mb-2">
+                        <Row>
+                            <Col>
+                        <Button color="success" className="ms-2">
                             <CSVLink
                                 data={csvData}
                                 headers={csvHeaders}
@@ -225,6 +83,12 @@ const PatientBill = () => {
                                 Export CSV
                             </CSVLink>
                         </Button>
+                                <Button color="primary" className="ms-2">
+                                    <Link to={'/patient-bill-options'} className="btn btn-sm btn-primary">
+                                        Custom Reports</Link>
+                                </Button>
+                            </Col>
+                        </Row>
                         <Table className="no-wrap mt-3 align-middle" responsive borderless>
                             <thead>
                             <tr>

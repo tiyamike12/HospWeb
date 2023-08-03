@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const Logo = () => {
   return (
     <Link to="/">
-      <LogoDark style={{ width: "100%", height: "100%" }}/>
+      <LogoDark style={{ width: "50%", height: "50%" }}/>
     </Link>
   );
 };

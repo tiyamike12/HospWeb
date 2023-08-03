@@ -18,6 +18,7 @@ import user1 from "../assets/images/users/usersp.png";
 //import {AuthContext} from "../context/AuthContext";
 import axios from "axios";
 import useAuth from "../context/useAuth";
+import {AuthContext} from "../context/AuthContext";
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -28,6 +29,7 @@ const Header = () => {
     const { user } = useAuth();
     const roleName = user?.role?.name;
     const username = user?.username;
+    const { logout } = useContext(AuthContext);
 
     const navigate = useNavigate();
     const toggle = () => setDropdownOpen((prevState) => !prevState);
@@ -38,9 +40,13 @@ const Header = () => {
 
     const handleLogout = async () => {
         try {
-            await axios.post(`${BASE_URL}/logout`);
+            await axios.post(`${BASE_URL}/logout`)
+                .then(response => {
+                    console.log(response.data.message)
+                    });
             //setToken(null);
             //localStorage.removeItem('token');
+            logout();
             navigate('/login');
         } catch (error) {
             // Handle errors
@@ -97,8 +103,6 @@ const Header = () => {
                         <DropdownMenu end>
                             <DropdownItem><Link to="/overdue-claims" style={{ textDecoration: 'none', color: 'black' }}>Overdue Claims</Link></DropdownItem>
                             <DropdownItem><Link to="/bills-outstanding" style={{ textDecoration: 'none', color: 'black' }}>Patient Bills</Link></DropdownItem>
-                            <DropdownItem divider/>
-                            <DropdownItem>Reset</DropdownItem>
                         </DropdownMenu>
                     </UncontrolledDropdown>
                 </Nav>

@@ -23,7 +23,6 @@ function NewLabTest() {
             await axios.post(`${BASE_URL}/lab-tests`, labTest)
                 .then(res => toast.success("Lab Test Record created successfully"));
             navigate('/lab-tests');
-            Alert.success('Lab Test Record added successfully!');
 
         } catch (error) {
             if (error.response) {

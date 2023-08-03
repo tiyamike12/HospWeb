@@ -46,7 +46,6 @@ function EditLabTest() {
         e.preventDefault();
         try {
             await axios.patch(`${BASE_URL}/lab-tests/${id}`, labTest);
-            Alert.success('Lab Test updated successfully!');
             navigate('/lab-tests');
         } catch (error) {
             if (error.response) {

@@ -57,13 +57,13 @@ const navigation = [
         showForRoles: ["system_administrator", "pharmacist"]
 
     },
-    {
-        title: "Lab Tests",
-        href: "/lab-tests",
-        icon: "bi bi-link",
-        showForRoles: ["system_administrator", "nurse"]
-
-    },
+    // {
+    //     title: "Lab Tests",
+    //     href: "/lab-tests",
+    //     icon: "bi bi-link",
+    //     showForRoles: ["system_administrator", "nurse"]
+    //
+    // },
     // {
     //     title: "Operation Theatres",
     //     href: "/operation-theatres",
@@ -113,7 +113,7 @@ const Sidebar = () => {
     let location = useLocation();
 
     return (
-        <div className="p-3">
+        <div className="p-1">
             <div className="d-flex align-items-center">
                 <Logo/>
                 <Button

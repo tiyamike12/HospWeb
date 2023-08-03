@@ -71,7 +71,6 @@ const MedicalRecordList = () => {
                                 <th>Medical Notes</th>
                                 <th>Diagnoses</th>
                                 <th>Prescriptions</th>
-                                <th>Lab Results</th>
                                 <th>Edit</th>
                                 <th>Delete</th>
 
@@ -86,7 +85,6 @@ const MedicalRecordList = () => {
                                     <td>{tdata.diagnoses}</td>
 
                                     <td>{tdata.prescriptions}</td>
-                                    <td>{tdata.lab_results}</td>
 
                                     <td><Link to={`/edit-medical-record/${tdata.id}`} className="btn btn-outline-primary">Edit</Link></td>
                                     <td><button className="btn btn-danger" onClick={() => {

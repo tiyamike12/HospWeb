@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Chart from "react-apexcharts";
+import {Card, CardTitle} from "reactstrap";
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 const AppointmentsOverallChart = () => {
@@ -38,8 +39,10 @@ const AppointmentsOverallChart = () => {
     }
     return (
         <div>
-            <h2>Appointments Statistics</h2>
+            <Card>
+            <CardTitle tag="h5">Appointments Statistics</CardTitle>
             <Chart options={chartData.options} series={chartData.series} type="pie" width={400} />
+            </Card>
         </div>
     );
 };

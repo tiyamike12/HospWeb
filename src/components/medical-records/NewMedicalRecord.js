@@ -6,6 +6,8 @@ import {toast} from "react-toastify";
 import Alert from "react-s-alert";
 import moment from 'moment';
 import Select from 'react-select';
+import {AuthContext} from "../../context/AuthContext";
+import useAuth from "../../context/useAuth";
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -19,9 +21,12 @@ function NewMedicalRecord() {
     const [selectedPatient, setSelectedPatient] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const { user } = useAuth();
+    const id = user?.id;
+
     const [medicalRecord, setMedicalRecord] = useState({
         patient_id: '',
-        user_id: '',
+        user_id: id,
         medical_notes: '',
         diagnoses: '',
         prescriptions: '',
@@ -85,7 +90,6 @@ function NewMedicalRecord() {
             await axios.post(`${BASE_URL}/medical-records`, medicalRecord)
                 .then(res => toast.success("Medical Record created successfully"));
             navigate('/medical-records');
-            Alert.success('Medical Record added successfully!');
 
         } catch (error) {
             if (error.response) {
@@ -218,19 +222,19 @@ function NewMedicalRecord() {
                     </CardTitle>
                     <CardBody>
                         <Form onSubmit={handleSubmit}>
-                            <FormGroup>
-                                <Label for="user_id">Select Doctor</Label>
-                                <select id="user_id" name="user_id"
-                                        className="form-control"
-                                        value={medicalRecord.user_id}
-                                        onChange={handleChange}>
-                                    <option value="">Please select a value</option>
-                                    {doctors.map(doctor => (
-                                        <option key={doctor.id} value={doctor.id}>{doctor.person.firstname} {doctor.person.lastname}</option>
-                                    ))}
-                                </select>
+                            {/*<FormGroup>*/}
+                            {/*    <Label for="user_id">Select Doctor</Label>*/}
+                            {/*    <select id="user_id" name="user_id"*/}
+                            {/*            className="form-control"*/}
+                            {/*            value={medicalRecord.user_id}*/}
+                            {/*            onChange={handleChange}>*/}
+                            {/*        <option value="">Please select a value</option>*/}
+                            {/*        {doctors.map(doctor => (*/}
+                            {/*            <option key={doctor.id} value={doctor.id}>{doctor.person.firstname} {doctor.person.lastname}</option>*/}
+                            {/*        ))}*/}
+                            {/*    </select>*/}
 
-                            </FormGroup>
+                            {/*</FormGroup>*/}
 
                             <FormGroup>
                                 <Label for="patient_id">Select Patient</Label>
@@ -250,32 +254,6 @@ function NewMedicalRecord() {
                                     }}
                                 />
                             </FormGroup>
-
-                            {/*<FormGroup>*/}
-                            {/*    <Label for="patient_id">Select Patient</Label>*/}
-                            {/*    <Select*/}
-                            {/*        id="patient_id"*/}
-                            {/*        name="patient_id"*/}
-                            {/*        options={patients}*/}
-                            {/*        value={selectedPatient}*/}
-                            {/*        onChange={handlePatientChange}*/}
-                            {/*        placeholder="Please select a value"*/}
-                            {/*        isSearchable*/}
-                            {/*    />*/}
-                            {/*</FormGroup>*/}
-                            {/*<FormGroup>*/}
-                            {/*    <Label for="patient_id">Select Patient</Label>*/}
-                            {/*    <select id="patient_id" name="patient_id"*/}
-                            {/*            className="form-control"*/}
-                            {/*            value={medicalRecord.patient_id}*/}
-                            {/*            onChange={handleChange}>*/}
-                            {/*        <option value="">Please select a value</option>*/}
-                            {/*        {patients.map(patient => (*/}
-                            {/*            <option key={patient.id} value={patient.id}>{patient.firstname} {patient.surname}</option>*/}
-                            {/*        ))}*/}
-                            {/*    </select>*/}
-
-                            {/*</FormGroup>*/}
 
                             <FormGroup>
                                 <Label for="medical_notes">Medical Notes</Label>

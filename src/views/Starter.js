@@ -14,6 +14,7 @@ import useAuth from "../context/useAuth";
 import AppointmentsOverallChart from "../components/dashboard/AppointmentsOverallChart";
 import BillingsOverallChart from "../components/dashboard/BillingsOverallChart";
 import BillingChart from "../components/dashboard/BillingChart";
+import BillingTotalsBarChart from "../components/dashboard/BillingTotalsBarChart";
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -106,54 +107,54 @@ const Starter = () => {
 
 
                     <Row>
-                        <Col sm="6" lg="6" xl="7" xxl="8">
+                        <Col sm="6" lg="6" xl="6" xxl="6">
                             <AppointmentsOverallChart/>
                         </Col>
-                        <Col sm="6" lg="6" xl="5" xxl="4">
+                        <Col sm="6" lg="6" xl="6" xxl="6">
                             <BillingsOverallChart/>
                         </Col>
                     </Row>
                 </div>
             )}
-            <Row>
-                <h5>My Appointments</h5>
-                <Col sm="6" lg="3">
-                    <TopCards
-                        bg="bg-light-success text-success"
-                        title="Scheduled"
-                        subtitle="Appointments Scheduled"
-                        earning="55"
-                        icon="bi bi-wallet"
-                    />
-                </Col>
-                <Col sm="6" lg="3">
-                    <TopCards
-                        bg="bg-light-danger text-danger"
-                        title="Completed"
-                        subtitle="Appointments Completed"
-                        earning="4"
-                        icon="bi bi-coin"
-                    />
-                </Col>
-                <Col sm="6" lg="3">
-                    <TopCards
-                        bg="bg-light-warning text-warning"
-                        title="Canceled"
-                        subtitle="Appointments Canceled"
-                        earning="45"
-                        icon="bi bi-basket3"
-                    />
-                </Col>
-                <Col sm="6" lg="3">
-                    <TopCards
-                        bg="bg-light-info text-into"
-                        title="Sales"
-                        subtitle="Weekly Sales"
-                        earning="210"
-                        icon="bi bi-bag"
-                    />
-                </Col>
-            </Row>
+            {/*<Row>*/}
+            {/*    <h5>My Appointments</h5>*/}
+            {/*    <Col sm="6" lg="3">*/}
+            {/*        <TopCards*/}
+            {/*            bg="bg-light-success text-success"*/}
+            {/*            title="Scheduled"*/}
+            {/*            subtitle="Appointments Scheduled"*/}
+            {/*            earning="55"*/}
+            {/*            icon="bi bi-wallet"*/}
+            {/*        />*/}
+            {/*    </Col>*/}
+            {/*    <Col sm="6" lg="3">*/}
+            {/*        <TopCards*/}
+            {/*            bg="bg-light-danger text-danger"*/}
+            {/*            title="Completed"*/}
+            {/*            subtitle="Appointments Completed"*/}
+            {/*            earning="4"*/}
+            {/*            icon="bi bi-coin"*/}
+            {/*        />*/}
+            {/*    </Col>*/}
+            {/*    <Col sm="6" lg="3">*/}
+            {/*        <TopCards*/}
+            {/*            bg="bg-light-warning text-warning"*/}
+            {/*            title="Canceled"*/}
+            {/*            subtitle="Appointments Canceled"*/}
+            {/*            earning="45"*/}
+            {/*            icon="bi bi-basket3"*/}
+            {/*        />*/}
+            {/*    </Col>*/}
+            {/*    <Col sm="6" lg="3">*/}
+            {/*        <TopCards*/}
+            {/*            bg="bg-light-info text-into"*/}
+            {/*            title="Sales"*/}
+            {/*            subtitle="Weekly Sales"*/}
+            {/*            earning="210"*/}
+            {/*            icon="bi bi-bag"*/}
+            {/*        />*/}
+            {/*    </Col>*/}
+            {/*</Row>*/}
             {/***Sales & Feed***/}
             <Row>
                 {/*<Col sm="6" lg="6" xl="7" xxl="8">*/}
@@ -166,6 +167,14 @@ const Starter = () => {
                 </Col>
 
             </Row>
+
+            <Row>
+
+                <Col lg="12">
+                    <BillingTotalsBarChart/>
+                </Col>
+
+            </Row>
             {/***Table ***/}
             <Row>
                 <Col lg="12">
@@ -173,19 +182,19 @@ const Starter = () => {
                 </Col>
             </Row>
             {/***Blog Cards***/}
-            <Row>
-                {BlogData.map((blg, index) => (
-                    <Col sm="6" lg="6" xl="3" key={index}>
-                        <Blog
-                            image={blg.image}
-                            title={blg.title}
-                            subtitle={blg.subtitle}
-                            text={blg.description}
-                            color={blg.btnbg}
-                        />
-                    </Col>
-                ))}
-            </Row>
+            {/*<Row>*/}
+            {/*    {BlogData.map((blg, index) => (*/}
+            {/*        <Col sm="6" lg="6" xl="3" key={index}>*/}
+            {/*            <Blog*/}
+            {/*                image={blg.image}*/}
+            {/*                title={blg.title}*/}
+            {/*                subtitle={blg.subtitle}*/}
+            {/*                text={blg.description}*/}
+            {/*                color={blg.btnbg}*/}
+            {/*            />*/}
+            {/*        </Col>*/}
+            {/*    ))}*/}
+            {/*</Row>*/}
         </div>
     );
 };

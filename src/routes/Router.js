@@ -66,6 +66,7 @@ const EditDepartmentService = lazy(() => import("../components/department-servic
 const ActivityLogList = lazy(() => import("../components/activity-logs/ActivityLogList"));
 const LongPendingClaimsList = lazy(() => import("../components/reports/LongPendingClaimsList"));
 const PatientBill = lazy(() => import("../components/reports/PatientBill"));
+const PatientBillOptions = lazy(() => import("../components/reports/PatientBillOptions"));
 
 /*****Routes******/
 
@@ -135,6 +136,7 @@ const ThemeRoutes = [
             {path: "/activity-logs", exact: true, element: <ActivityLogList/>},
             {path: "/overdue-claims", exact: true, element: <LongPendingClaimsList/>},
             {path: "/bills-outstanding", exact: true, element: <PatientBill/>},
+            {path: "/patient-bill-options", exact: true, element: <PatientBillOptions/>},
 
         ],
     },

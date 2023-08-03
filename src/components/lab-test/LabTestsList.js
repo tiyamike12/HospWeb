@@ -31,8 +31,6 @@ const LabTestsList = () => {
                 setSelectedItemId(null);
                 setShowModal(false);
                 toast.success('Lab Test removed successfully')
-                //NotificationManager.success('User removed successfully');
-                Alert.success('Lab Test removed successfully!');
 
             })
             .catch(error => console.log(error));

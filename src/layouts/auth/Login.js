@@ -80,7 +80,7 @@ const Login = () => {
                     {/*<h3 className="Auth-form-title">Sign In</h3> */}
                     <div className="text-center mb-4 pt-5">
                         <img className="logo" src={LogoWhite} style={{ width: 200, height: 200 }} alt="logo"/>
-                        <h4 className="my-4">Hosp System</h4>
+                        <h4 className="my-4">Hospital System</h4>
                         <p className="my-4 font-weight-normal"></p>
                     </div>
                     <div className="form-group mt-3">

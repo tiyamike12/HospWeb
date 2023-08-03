@@ -28,9 +28,13 @@ const AuthContextProvider = ({ children }) => {
         // Whenever the token or user role changes, update them in the cookies
         if (token) {
             Cookies.set('token', token, { expires: 7 }); // Cookie expires after 7 days
+        } else {
+            Cookies.remove('token');
         }
         if (user) {
             Cookies.set('user', user, { expires: 7 }); // Cookie expires after 7 days
+        } else {
+            Cookies.remove('user');
         }
     }, [token, user]);
 
@@ -61,8 +65,14 @@ const AuthContextProvider = ({ children }) => {
     //     setIsLoggedIn(false);
     // };
 
+    const logout = () => {
+        setIsLoggedIn(false);
+        setToken(null); // Clear the token
+        setUser(null); // Clear the user
+    };
+
     return (
-        <AuthContext.Provider value={{ isLoggedIn, token, setToken, user, setUser }}>
+        <AuthContext.Provider value={{ isLoggedIn, token, setToken, user, setUser, logout }}>
             {children}
         </AuthContext.Provider>
     );
